@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daniel.uy - Online Code Demos</title>
+
+    <link rel="stylesheet" href="/demos/dnd/css/simple-demo.css" rel="stylesheet" />
+  </head>
+  <body>
+    
+    <div class="wrapper">
+      <h1>Simple Demo</h1>
+      
+      <div class="left-column">
+        <!-- D&D Markup -->
+        <div id="drag-and-drop-zone" class="uploader">
+          <div>Drag &amp; Drop Images Here</div>
+          <div class="or">-or-</div>
+          <div class="browser">
+            <label>
+              <span>Click to open the file Browser</span>
+              <input type="file" name="files[]" multiple="multiple" title='Click to add Files'>
+            </label>
+          </div>
+        </div>
+        <!-- /D&D Markup -->
+      </div>
+      
+      <div id="fileList">
+        
+        <!-- Files will be places here -->
+
+      </div>
+      
+      <div id="debug">
+        <h2>Debug</h2>
+        <div>
+          <ul>
+            <!-- Debug lines will be added here -->
+          </ul>
+        </div>
+      </div>
+      
+      <div id="footer">
+        &copy; 2014 - <a href="http://www.daniel.com.uy/">Daniel Morales</a>
+      </div>
+    </div>
+
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+    <script type="text/javascript" src="/demos/dnd/js/dmuploader.min.js"></script>
+
+    <script type="text/javascript">
+      
+      //-- Some functions to work with our UI
+      function add_log(message)
+      {
+        var template = '<li>[' + new Date().getTime() + '] - ' + message + '</li>';
+        
+        $('#debug').find('ul').prepend(template);
+      }
+      
+      function add_file(id, file)
+      {
+        var template = '' +
+          '<div class="file" id="uploadFile' + id + '">' +
+            '<div class="info">' +
+              '#1 - <span class="filename" title="Size: ' + file.size + 'bytes - Mimetype: ' + file.type + '">' + file.name + '</span><br /><small>Status: <span class="status">Waiting</span></small>' +
+            '</div>' +
+            '<div class="bar">' +
+              '<div class="progress" style="width:0%"></div>' +
+            '</div>' +
+          '</div>';
+          
+          $('#fileList').prepend(template);
+      }
+      
+      function update_file_status(id, status, message)
+      {
+        $('#uploadFile' + id).find('span.status').html(message).addClass(status);
+      }
+      
+      function update_file_progress(id, percent)
+      {
+        $('#uploadFile' + id).find('div.progress').width(percent);
+      }
+      
+      // Upload Plugin itself
+      $('#drag-and-drop-zone').dmUploader({
+        url: '/demos/dnd/upload.php',
+        dataType: 'json',
+        allowedTypes: 'image/*',
+        onInit: function(){
+          add_log('Penguin initialized :)');
+        },
+        onBeforeUpload: function(id){
+          add_log('Starting the upload of #' + id);
+          
+          update_file_status(id, 'uploading', 'Uploading...');
+        },
+        onNewFile: function(id, file){
+          add_log('New file added to queue #' + id);
+          
+          add_file(id, file);
+        },
+        onComplete: function(){
+          add_log('All pending tranfers finished');
+        },
+        onUploadProgress: function(id, percent){
+          var percentStr = percent + '%';
+
+          update_file_progress(id, percentStr);
+        },
+        onUploadSuccess: function(id, data){
+          add_log('Upload of file #' + id + ' completed');
+          
+          add_log('Server Response for file #' + id + ': ' + JSON.stringify(data));
+          
+          update_file_status(id, 'success', 'Upload Complete');
+          
+          update_file_progress(id, '100%');
+        },
+        onUploadError: function(id, message){
+          add_log('Failed to Upload file #' + id + ': ' + message);
+          
+          update_file_status(id, 'error', message);
+        },
+        onFileTypeError: function(file){
+          add_log('File \'' + file.name + '\' cannot be added: must be an image');
+          
+        },
+        onFileSizeError: function(file){
+          add_log('File \'' + file.name + '\' cannot be added: size excess limit');
+        },
+        onFallbackMode: function(message){
+          alert('Browser not supported(do something else here!): ' + message);
+        }
+      });
+    </script>
+
+  </body>
+</html>

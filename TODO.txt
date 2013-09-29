@@ -1,0 +1,4 @@
+- Testing!!!!!!!!
+- Add a way to cancel/remove files that are en queue
+- Add a way to Stop the upload of files
+- Add some method to reset the plugin (resets ids, empty arrays, free resources, etc..)

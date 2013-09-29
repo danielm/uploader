@@ -1,0 +1,44 @@
+{
+    "name": "dmuploader",
+    "title": "jQuery Ajax File Uploader",
+    "description": "jQuery plugin for ajax file uploading with file progress",
+    "keywords": [
+        "upload",
+        "ajax",
+        "forms",
+        "dnd",
+        "drag",
+        "drop",
+        "progress",
+        "form"
+    ],
+    "version": "0.1.0",
+    "author": {
+        "name": "Daniel Morales",
+        "url": "https://github.com/danielm/uploader/0.1.0/AUTHORS.txt"
+    },
+    "maintainers": [
+        {
+            "name": "Daniel Morales",
+            "email": "daniminas@gmail.com",
+            "url": "http://www.daniel.com.uy"
+        }
+    ],
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/danielm/uploader/blob/0.1.0/MIT-LICENSE.txt"
+        },
+        {
+            "type": "GPL",
+            "url": "https://github.com/danielm/uploader/blob/0.1.0/GPL-LICENSE.txt"
+        }
+    ],
+    "bugs": "https://github.com/danielm/uploader/issues",
+    "homepage": "https://github.com/danielm/uploader",
+    "docs": "https://github.com/danielm/uploader",
+    "download": "https://github.com/danielm/uploader/",
+    "dependencies": {
+        "jquery": ">=1.5"
+    }
+}
