@@ -15,7 +15,7 @@
     "version": "0.1.0",
     "author": {
         "name": "Daniel Morales",
-        "url": "https://github.com/danielm/uploader/0.1.0/AUTHORS.txt"
+        "url": "https://github.com/danielm/uploader/blob/0.1.0/AUTHORS.txt"
     },
     "maintainers": [
         {
@@ -37,7 +37,7 @@
     "bugs": "https://github.com/danielm/uploader/issues",
     "homepage": "https://github.com/danielm/uploader",
     "docs": "https://github.com/danielm/uploader",
-    "download": "https://github.com/danielm/uploader/",
+    "download": "https://github.com/danielm/uploader/releases",
     "dependencies": {
         "jquery": ">=1.5"
     }
