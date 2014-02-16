@@ -12,10 +12,11 @@
         "progress",
         "form"
     ],
-    "version": "0.1.0",
+    "version": "0.1.1",
     "author": {
         "name": "Daniel Morales",
-        "url": "https://github.com/danielm/uploader/blob/0.1.0/AUTHORS.txt"
+        "email": "daniminas@gmail.com",
+        "url": "https://www.daniel.com.uy"
     },
     "maintainers": [
         {
