@@ -28,11 +28,11 @@
     "licenses": [
         {
             "type": "MIT",
-            "url": "https://github.com/danielm/uploader/blob/0.1.0/MIT-LICENSE.txt"
+            "url": "https://github.com/danielm/uploader/blob/0.1.1/MIT-LICENSE.txt"
         },
         {
             "type": "GPL",
-            "url": "https://github.com/danielm/uploader/blob/0.1.0/GPL-LICENSE.txt"
+            "url": "https://github.com/danielm/uploader/blob/0.1.1/GPL-LICENSE.txt"
         }
     ],
     "bugs": "https://github.com/danielm/uploader/issues",
