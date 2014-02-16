@@ -105,6 +105,7 @@
         url: '/demos/dnd/upload.php',
         dataType: 'json',
         allowedTypes: 'image/*',
+        /*extFilter: 'jpg;png;gif',*/
         onInit: function(){
           $.danidemo.addLog('#demo-debug', 'default', 'Plugin initialized correctly');
         },
@@ -144,6 +145,9 @@
         onFileSizeError: function(file){
           $.danidemo.addLog('#demo-debug', 'error', 'File \'' + file.name + '\' cannot be added: size excess limit');
         },
+        /*onFileExtError: function(file){
+          $.danidemo.addLog('#demo-debug', 'error', 'File \'' + file.name + '\' has a Not Allowed Extension');
+        },*/
         onFallbackMode: function(message){
           $.danidemo.addLog('#demo-debug', 'info', 'Browser not supported(do something else here!): ' + message);
         }

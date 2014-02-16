@@ -7,6 +7,8 @@ Basic Javascript/Jquery knowledge is necesary to use this plugin: how to set par
 
 As for new features im open to suggestions, but please before doing so read the TODO file to know what i've in mind :)
 
+[View Changelog](#changelog)
+
 ##Demo
 Using Bootstrap: http://danielm.herokuapp.com/demos/dnd/
 
@@ -52,6 +54,9 @@ Max size of each individual file for pre-submit validation. Default is <code>0</
 
 ###allowedTypes
 Regular expression to match file types for pre-submit validation. Default is <code>'\*'</code>. Ej: <code>image/*</code>
+
+###extFilter
+Extension(s) comma separted for pre-submit validation. Default is <code>NULL</code>. Ej: <code>jpg;png;gif</code>
 
 ###dataType
 Data type corresponds to what the server is going to return after a successful upload.
@@ -168,3 +173,17 @@ onFileSizeError: function(file){
   console.log('File size of ' + file.name + ' exceeds the limit');
 }
 ````
+
+###onFileExtError
+Called when the file extension pre-submit validation fails.
+See (See [settings](#extfilter) for more.)
+````javascript
+onFileExtError: function(file){
+  console.log('File extension of ' + file.name + ' is not allowed');
+}
+````
+
+##Changelog
+- [Nov 01 2013] Initial relase.
+- [Feb 08 2014] Project moved to Github.
+- [Feb 15 2014] Added option for pre-submit file extension validation. View: [extFilter](#extfilter)/[onFileExtError](#onfileexterror)

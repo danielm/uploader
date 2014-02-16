@@ -17,6 +17,7 @@
     extraData: {},
     maxFileSize: 0,
     allowedTypes: '*',
+    extFilter: null,
     dataType: null,
     fileName: 'file',
     onInit: function(){},
@@ -28,7 +29,8 @@
     onUploadSuccess: function(id, data){},
     onUploadError: function(id, message){},
     onFileTypeError: function(file){},
-    onFileSizeError: function(file){}
+    onFileSizeError: function(file){},
+    onFileExtError: function(file){}
   };
 
   var DmUploader = function(element, options)
@@ -145,6 +147,19 @@
         this.settings.onFileTypeError.call(this.element, file);
 
         continue;
+      }
+
+      // Check file extension
+      if(this.settings.extFilter != null){
+        var extList = this.settings.extFilter.toLowerCase().split(';');
+
+        var ext = file.name.toLowerCase().split('.').pop();
+
+        if($.inArray(ext, extList) < 0){
+          this.settings.onFileExtError.call(this.element, file);
+
+          continue;
+        }
       }
 
       this.queue.push(file);
