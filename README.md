@@ -7,12 +7,17 @@ Basic Javascript/Jquery knowledge is necesary to use this plugin: how to set par
 
 As for new features im open to suggestions, but please before doing so read the TODO file to know what i've in mind :)
 
+Dual licensed under the MIT and GPL licenses.
+Created by Daniel Morales. [Contact Me](mailto:daniminas@gmail.com) for more info or anything you want :)
+
 [View Changelog](#changelog)
 
 ##Demo
 Using Bootstrap: http://danielm.herokuapp.com/demos/dnd/
 
 Plain HTML: http://danielm.herokuapp.com/demos/dnd/simple.php
+
+Image Upload w/Preview: http://danielm.herokuapp.com/demos/dnd/image-preview.php
 
 ##API
 ````javascript
