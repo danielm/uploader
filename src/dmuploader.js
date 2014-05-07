@@ -48,6 +48,21 @@
     return true;
   };
 
+  DmUploader.prototype.methods = {
+    cancel: function(id) {
+      /* ToDo: Stops(if uploading) and Remove the upload from Queue */
+    },
+    cancelAll: function(){
+      /* Same as cancel, but for all pending uploads */
+    },
+    start: function(id) {
+      /* ToDo: Start or re-try the upload */
+    },
+    reset: function() {
+      /* ToDo: Reset plugin resources */
+    }
+  };
+
   DmUploader.prototype.checkBrowser = function()
   {
     if(window.FormData === undefined){
@@ -257,11 +272,18 @@
     });
   }
 
-  $.fn.dmUploader = function(options){
+  $.fn.dmUploader = function(args){
+    var argsc = arguments;
+
     return this.each(function(){
-      if(!$.data(this, pluginName)){
-        $.data(this, pluginName, new DmUploader(this, options));
-      }
+      var plugin = $.data(this, pluginName);
+      if(!plugin){
+        $.data(this, pluginName, new DmUploader(this, args));
+      } else if (plugin.methods[args]){
+        plugin.methods[args].apply(plugin, Array.prototype.slice.call(argsc, 1));
+      } else {
+        $.error('Method ' +  args + ' does not exist on jQuery.dmUploader');
+      } 
     });
   };
 

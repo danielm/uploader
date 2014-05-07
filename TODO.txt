@@ -2,3 +2,8 @@
 - Add a way to cancel/remove files that are en queue
 - Add a way to Stop the upload of files
 - Add some method to reset the plugin (resets ids, empty arrays, free resources, etc..)
+- Callback when the upload progress event isn't supported by the browser
+- Allow the option to do something like Facebook when draggin-in content:
+   ... show/hide (we are goin to just use moar callbacks)
+- Add auto-start option (means no queue)...
+   ... and maybe maxSimulaneusUploads some day (which is a mix of both)
