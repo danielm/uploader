@@ -47,6 +47,33 @@
 
     return true;
   };
+  
+  var DmUploaderFile = function(file)
+  {
+    this.file = file;
+
+    // Status can be:
+    // - 0: pending
+    // - 1: uploading
+    // - 2: completed
+    // - 3: failed
+    this.status = 0;
+  }
+
+  DmUploaderFile.prototype.getFile = function()
+  {
+    return this.file;
+  }
+
+  DmUploaderFile.prototype.getStatus = function()
+  {
+    return this.status;
+  }
+
+  DmUploaderFile.prototype.setStatus = function(status)
+  {
+    this.status = status;
+  }
 
   DmUploader.prototype.methods = {
     cancel: function(id) {
@@ -177,7 +204,8 @@
         }
       }
 
-      this.queue.push(file);
+      var fileObj = new DmUploaderFile(file);
+      this.queue.push(fileObj);
 
       var index = this.queue.length - 1;
 
@@ -222,7 +250,7 @@
 
     // Form Data
     var fd = new FormData();
-    fd.append(widget.settings.fileName, file);
+    fd.append(widget.settings.fileName, file.getFile());
 
     // Append extra Form Data
     $.each(widget.settings.extraData, function(exKey, exVal){
@@ -232,6 +260,7 @@
     widget.settings.onBeforeUpload.call(widget.element, widget.queuePos);
 
     widget.queueRunning = true;
+    file.setStatus(1);
 
     // Ajax Submit
     $.ajax({
@@ -261,9 +290,11 @@
         return xhrobj;
       },
       success: function (data, message, xhr){
+        file.setStatus(2);
         widget.settings.onUploadSuccess.call(widget.element, widget.queuePos, data);
       },
       error: function (xhr, status, errMsg){
+        file.setStatus(3);
         widget.settings.onUploadError.call(widget.element, widget.queuePos, errMsg);
       },
       complete: function(xhr, textStatus){
