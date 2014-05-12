@@ -1,5 +1,7 @@
 - Testing!!!!!!!!
 
+- Review methods.upload con auto = true, y fallidos/cancellados,e tc
+
 - Add auto-start option (means no queue)...
    ... and maybe maxSimulaneusUploads some day (which is a mix of both)
 
