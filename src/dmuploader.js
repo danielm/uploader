@@ -63,26 +63,6 @@
     this.status = 0;
   }
 
-  DmUploaderFile.prototype.setXhr = function(jqXHR)
-  {
-    this.jqXHR = jqXHR;
-  }
-
-  DmUploaderFile.prototype.getFile = function()
-  {
-    return this.file;
-  }
-
-  DmUploaderFile.prototype.getStatus = function()
-  {
-    return this.status;
-  }
-
-  DmUploaderFile.prototype.setStatus = function(status)
-  {
-    this.status = status;
-  }
-
   DmUploaderFile.prototype.cancel = function()
   {
     switch (this.status){
@@ -102,6 +82,76 @@
     return true;
   }
 
+  DmUploaderFile.prototype.upload = function(widget)
+  {
+    var file = $(this);
+
+    // Cancelled by the user?
+    // ToDo: Check status of 'uploading' or completed
+    if (file.status == 4){
+      widget.processQueue();
+
+      return;
+    }
+
+    // Form Data
+    var fd = new FormData();
+    fd.append(widget.settings.fileName, file.file);
+
+    // Append extra Form Data
+    $.each(widget.settings.extraData, function(exKey, exVal){
+      fd.append(exKey, exVal);
+    });
+
+    widget.settings.onBeforeUpload.call(widget.element, widget.queuePos);
+
+    widget.queueRunning = true;
+    file.status = 1;
+
+    // Ajax Submit
+    file.jqXHR = $.ajax({
+      url: widget.settings.url,
+      type: widget.settings.method,
+      dataType: widget.settings.dataType,
+      data: fd,
+      cache: false,
+      contentType: false,
+      processData: false,
+      forceSync: false,
+      xhr: function(){
+        var xhrobj = $.ajaxSettings.xhr();
+        if(xhrobj.upload){
+          xhrobj.upload.addEventListener('progress', function(event) {
+            var percent = 0;
+            var position = event.loaded || event.position;
+            var total = event.total || event.totalSize;
+            if(event.lengthComputable){
+              percent = Math.ceil(position / total * 100);
+            }
+
+            widget.settings.onUploadProgress.call(widget.element, widget.queuePos, percent);
+          }, false);
+        }
+
+        return xhrobj;
+      },
+      success: function (data, message, xhr){
+        file.status = 2;
+        widget.settings.onUploadSuccess.call(widget.element, widget.queuePos, data);
+      },
+      error: function (xhr, status, errMsg){
+        // If the status is: cancelled (by the user) don't invoke the error callback
+        if (file.status != 4){
+          file.status = 3;
+          widget.settings.onUploadError.call(widget.element, widget.queuePos, errMsg);
+        }
+      },
+      complete: function(xhr, textStatus){
+        widget.processQueue();
+      }
+    });
+  }
+
   DmUploader.prototype.methods = {
     cancel: function(id) {
       /* Stops(if uploading) and Remove the upload from Queue */
@@ -117,7 +167,11 @@
       });
     },
     start: function(id) {
-      /* ToDo: Start or re-try the upload */
+      /* Start or re-try the upload */
+      if (id > (this.queue.length - 1))
+        return false;
+
+      return this.queue[this.queuePos].upload(this);
     },
     reset: function() {
       /* ToDo: Reset plugin resources */
@@ -263,90 +317,22 @@
 
   DmUploader.prototype.processQueue = function()
   {
-    var widget = this;
+    this.queuePos++;
 
-    widget.queuePos++;
-
-    if(widget.queuePos >= widget.queue.length){
+    if(this.queuePos >= this.queue.length){
       // Cleanup
 
-      widget.settings.onComplete.call(widget.element);
+      this.settings.onComplete.call(this.element);
 
       // Wait until new files are droped
-      widget.queuePos = (widget.queue.length - 1);
+      this.queuePos = (this.queue.length - 1);
 
-      widget.queueRunning = false;
-
-      return;
-    }
-
-    var file = widget.queue[widget.queuePos];
-
-    // Cancelled by the user?
-    if (file.getStatus() == 4){
-      widget.processQueue();
+      this.queueRunning = false;
 
       return;
     }
 
-    // Form Data
-    var fd = new FormData();
-    fd.append(widget.settings.fileName, file.getFile());
-
-    // Append extra Form Data
-    $.each(widget.settings.extraData, function(exKey, exVal){
-      fd.append(exKey, exVal);
-    });
-
-    widget.settings.onBeforeUpload.call(widget.element, widget.queuePos);
-
-    widget.queueRunning = true;
-    file.setStatus(1);
-
-    // Ajax Submit
-    var jqXHR = $.ajax({
-      url: widget.settings.url,
-      type: widget.settings.method,
-      dataType: widget.settings.dataType,
-      data: fd,
-      cache: false,
-      contentType: false,
-      processData: false,
-      forceSync: false,
-      xhr: function(){
-        var xhrobj = $.ajaxSettings.xhr();
-        if(xhrobj.upload){
-          xhrobj.upload.addEventListener('progress', function(event) {
-            var percent = 0;
-            var position = event.loaded || event.position;
-            var total = event.total || event.totalSize;
-            if(event.lengthComputable){
-              percent = Math.ceil(position / total * 100);
-            }
-
-            widget.settings.onUploadProgress.call(widget.element, widget.queuePos, percent);
-          }, false);
-        }
-
-        return xhrobj;
-      },
-      success: function (data, message, xhr){
-        file.setStatus(2);
-        widget.settings.onUploadSuccess.call(widget.element, widget.queuePos, data);
-      },
-      error: function (xhr, status, errMsg){
-        // If the status is: cancelled (by the user) don't invoke the error callback
-        if (file.getStatus() != 4){
-          file.setStatus(3);
-          widget.settings.onUploadError.call(widget.element, widget.queuePos, errMsg);
-        }
-      },
-      complete: function(xhr, textStatus){
-        widget.processQueue();
-      }
-    });
-
-    file.setXhr(jqXHR);
+    this.queue[this.queuePos].upload(this);
   }
 
   $.fn.dmUploader = function(args){

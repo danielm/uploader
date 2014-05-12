@@ -1,10 +1,11 @@
 - Testing!!!!!!!!
-- Implement methods.start() upload
-   * Add DmUploaderFile.upload()... that will wrap the $.ajax() call
-      * Some methods like DmUploaderFile.setStatus/getStatus setXhr/ will not be necesary anymore
-- Add some method to reset the plugin (resets ids, empty arrays, free resources, etc..)
-- Callback when the upload progress event isn't supported by the browser
-- Allow the option to do something like Facebook when draggin-in content:
-   ... show/hide (we are goin to just use moar callbacks)
+
 - Add auto-start option (means no queue)...
    ... and maybe maxSimulaneusUploads some day (which is a mix of both)
+
+- method to know when the upload progress event isn't supported by the browser
+
+- Add some method to reset the plugin (resets ids, empty arrays, free resources, etc..)
+
+- Allow the option to do something like Facebook when draggin-in content:
+   ... show/hide (we are goin to just use moar callbacks)
