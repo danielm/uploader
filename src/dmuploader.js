@@ -20,6 +20,7 @@
     extFilter: null,
     dataType: null,
     fileName: 'file',
+    auto: true,
     onInit: function(){},
     onFallbackMode: function() {message},
     onNewFile: function(id, file){},
@@ -61,6 +62,13 @@
     // - 3: failed
     // - 4: cancelled (by the user)
     this.status = 0;
+
+    this.id = -1;
+  }
+
+  DmUploaderFile.prototype.setId = function(id)
+  {
+    this.id = id;
   }
 
   DmUploaderFile.prototype.cancel = function()
@@ -87,8 +95,8 @@
     var file = $(this);
 
     // Cancelled by the user?
-    // ToDo: Check status of 'uploading' or completed
-    if (file.status == 4){
+    // Review!!!
+    if ((file.status == 4) && widget.settings.auto){
       widget.processQueue();
 
       return;
@@ -147,7 +155,8 @@
         }
       },
       complete: function(xhr, textStatus){
-        widget.processQueue();
+        if (widget.settings.auto)
+          widget.processQueue();
       }
     });
   }
@@ -158,7 +167,7 @@
       if (id > (this.queue.length - 1))
         return false;
 
-      return this.queue[this.queuePos].cancel();
+      return this.queue[id].cancel();
     },
     cancelAll: function() {
       /* Same as cancel, but for all pending uploads */
@@ -171,7 +180,10 @@
       if (id > (this.queue.length - 1))
         return false;
 
-      return this.queue[this.queuePos].upload(this);
+      if (this.settings.auto && (id >= this.queuePos))
+        return false;
+
+      return this.queue[id].upload(this);
     },
     reset: function() {
       /* ToDo: Reset plugin resources */
@@ -296,6 +308,7 @@
       this.queue.push(fileObj);
 
       var index = this.queue.length - 1;
+      fileObj.setId(index);
 
       this.settings.onNewFile.call(this.element, index, file);
     }
@@ -310,7 +323,8 @@
       return false;
     }
 
-    this.processQueue();
+    if (this.settings.auto)
+      this.processQueue();
 
     return true;
   };
