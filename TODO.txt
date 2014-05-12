@@ -1,6 +1,7 @@
 - Testing!!!!!!!!
-- Add a way to cancel/remove files that are en queue
-- Add a way to Stop the upload of files
+- Implement methods.start() upload
+   * Add DmUploaderFile.upload()... that will wrap the $.ajax() call
+      * Some methods like DmUploaderFile.setStatus/getStatus setXhr/ will not be necesary anymore
 - Add some method to reset the plugin (resets ids, empty arrays, free resources, etc..)
 - Callback when the upload progress event isn't supported by the browser
 - Allow the option to do something like Facebook when draggin-in content:

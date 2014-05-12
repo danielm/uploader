@@ -52,12 +52,20 @@
   {
     this.file = file;
 
+    this.jqXHR = null;
+
     // Status can be:
     // - 0: pending
     // - 1: uploading
     // - 2: completed
     // - 3: failed
+    // - 4: cancelled (by the user)
     this.status = 0;
+  }
+
+  DmUploaderFile.prototype.setXhr = function(jqXHR)
+  {
+    this.jqXHR = jqXHR;
   }
 
   DmUploaderFile.prototype.getFile = function()
@@ -75,12 +83,38 @@
     this.status = status;
   }
 
+  DmUploaderFile.prototype.cancel = function()
+  {
+    switch (this.status){
+      case 0:
+        // Pending status...
+        this.status = 4;
+        break;
+      case 1:
+        // Uploading status...
+        this.status = 4;
+        this.jqXHR.abort();
+        break;
+      default:
+        return false;
+    }
+
+    return true;
+  }
+
   DmUploader.prototype.methods = {
     cancel: function(id) {
-      /* ToDo: Stops(if uploading) and Remove the upload from Queue */
+      /* Stops(if uploading) and Remove the upload from Queue */
+      if (id > (this.queue.length - 1))
+        return false;
+
+      return this.queue[this.queuePos].cancel();
     },
-    cancelAll: function(){
+    cancelAll: function() {
       /* Same as cancel, but for all pending uploads */
+      $.each(this.queue, function(id, file){
+        file.cancel();
+      });
     },
     start: function(id) {
       /* ToDo: Start or re-try the upload */
@@ -248,6 +282,13 @@
 
     var file = widget.queue[widget.queuePos];
 
+    // Cancelled by the user?
+    if (file.getStatus() == 4){
+      widget.processQueue();
+
+      return;
+    }
+
     // Form Data
     var fd = new FormData();
     fd.append(widget.settings.fileName, file.getFile());
@@ -263,7 +304,7 @@
     file.setStatus(1);
 
     // Ajax Submit
-    $.ajax({
+    var jqXHR = $.ajax({
       url: widget.settings.url,
       type: widget.settings.method,
       dataType: widget.settings.dataType,
@@ -294,13 +335,18 @@
         widget.settings.onUploadSuccess.call(widget.element, widget.queuePos, data);
       },
       error: function (xhr, status, errMsg){
-        file.setStatus(3);
-        widget.settings.onUploadError.call(widget.element, widget.queuePos, errMsg);
+        // If the status is: cancelled (by the user) don't invoke the error callback
+        if (file.getStatus() != 4){
+          file.setStatus(3);
+          widget.settings.onUploadError.call(widget.element, widget.queuePos, errMsg);
+        }
       },
       complete: function(xhr, textStatus){
         widget.processQueue();
       }
     });
+
+    file.setXhr(jqXHR);
   }
 
   $.fn.dmUploader = function(args){
