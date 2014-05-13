@@ -1,9 +1,6 @@
 - Testing!!!!!!!!
 
-- Review methods.upload con auto = true, y fallidos/cancellados,e tc
-
-- Add auto-start option (means no queue)...
-   ... and maybe maxSimulaneusUploads some day (which is a mix of both)
+- Add some maxSimulaneusUploads some day
 
 - method to know when the upload progress event isn't supported by the browser
 
