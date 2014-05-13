@@ -90,15 +90,22 @@
     return true;
   }
 
-  DmUploaderFile.prototype.upload = function(widget)
+  DmUploaderFile.prototype.upload = function(widget, single)
   {
-    var file = $(this);
+    var file = this;
 
     // Cancelled by the user?
-    // Review!!!
-    if ((file.status == 4) && widget.settings.auto){
+    if (!single && (file.status == 4)){
       widget.processQueue();
 
+      return;
+    }
+
+    // Uploading, or completed files...
+    if (file.status == 1 || file.status == 2){
+      if (!single)
+        widget.processQueue();
+        
       return;
     }
 
@@ -180,10 +187,13 @@
       if (id > (this.queue.length - 1))
         return false;
 
+      // If we are using a File queue only allow to start (or retry)
+      // files that that were cancelled or failed (NOT files that are 'next' in
+      // our queue.
       if (this.settings.auto && (id >= this.queuePos))
         return false;
 
-      return this.queue[id].upload(this);
+      return this.queue[id].upload(this, true);
     },
     reset: function() {
       /* ToDo: Reset plugin resources */
@@ -346,7 +356,7 @@
       return;
     }
 
-    this.queue[this.queuePos].upload(this);
+    this.queue[this.queuePos].upload(this, false);
   }
 
   $.fn.dmUploader = function(args){
