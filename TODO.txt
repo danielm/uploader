@@ -1,5 +1,7 @@
 - Testing!!!!!!!!
 
+- Test 'devel' features: manual upload & 'auto' option.
+
 - Add some maxSimulaneusUploads some day
 
 - method to know when the upload progress event isn't supported by the browser
