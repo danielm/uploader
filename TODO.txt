@@ -2,7 +2,21 @@
 
 - Test 'devel' features: manual upload & 'auto' option.
 
-- Add some maxSimulaneusUploads some day
+- Reset method: call cancelAll first!
+
+- Add maxSimulaneusRequests
+- Add maxFilesPerRequest
+
+Documentation:
+  - Add to Readme.md:
+      - New option 'auto'
+      - New option 'skipChecks'
+      - New methods:
+         * cancel
+         * cancelAll
+         * start
+         * reset
+         * supportsProgress
 
 - Allow the option to do something like Facebook when draggin-in content:
    ... show/hide (we are goin to just use moar callbacks)
