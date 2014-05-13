@@ -98,15 +98,15 @@
     if (!single && (file.status == 4)){
       widget.processQueue();
 
-      return;
+      return false;
     }
 
     // Uploading, or completed files...
     if (file.status == 1 || file.status == 2){
       if (!single)
         widget.processQueue();
-        
-      return;
+
+      return false;
     }
 
     // Form Data
@@ -118,9 +118,11 @@
       fd.append(exKey, exVal);
     });
 
-    widget.settings.onBeforeUpload.call(widget.element, widget.queuePos);
+    widget.settings.onBeforeUpload.call(widget.element, file.id);
 
-    widget.queueRunning = true;
+    if (!single)
+      widget.queueRunning = true;
+
     file.status = 1;
 
     // Ajax Submit
@@ -144,7 +146,7 @@
               percent = Math.ceil(position / total * 100);
             }
 
-            widget.settings.onUploadProgress.call(widget.element, widget.queuePos, percent);
+            widget.settings.onUploadProgress.call(widget.element, file.id, percent);
           }, false);
         }
 
@@ -152,13 +154,13 @@
       },
       success: function (data, message, xhr){
         file.status = 2;
-        widget.settings.onUploadSuccess.call(widget.element, widget.queuePos, data);
+        widget.settings.onUploadSuccess.call(widget.element, file.id, data);
       },
       error: function (xhr, status, errMsg){
         // If the status is: cancelled (by the user) don't invoke the error callback
         if (file.status != 4){
           file.status = 3;
-          widget.settings.onUploadError.call(widget.element, widget.queuePos, errMsg);
+          widget.settings.onUploadError.call(widget.element, file.id, errMsg);
         }
       },
       complete: function(xhr, textStatus){
@@ -166,6 +168,8 @@
           widget.processQueue();
       }
     });
+
+    return true;
   }
 
   DmUploader.prototype.methods = {
@@ -178,9 +182,14 @@
     },
     cancelAll: function() {
       /* Same as cancel, but for all pending uploads */
+      var nCancels = 0;
+
       $.each(this.queue, function(id, file){
-        file.cancel();
+        if (file.cancel())
+          nCancels++;
       });
+
+      return nCancels;
     },
     start: function(id) {
       /* Start or re-try the upload */
@@ -200,6 +209,8 @@
       this.queue = new Array();
       this.queuePos = -1;
       this.queueRunning = false;
+
+      return true;
     }
   };
 
@@ -361,18 +372,26 @@
   }
 
   $.fn.dmUploader = function(args){
-    var argsc = arguments;
+    // Now we are only able to initialize only one widget at the time
+    if($(this).length != 1){
+      $.error('Need one element to initialize jQuery.dmUploader');
 
-    return this.each(function(){
-      var plugin = $.data(this, pluginName);
-      if(!plugin){
-        $.data(this, pluginName, new DmUploader(this, args));
-      } else if (plugin.methods[args]){
-        plugin.methods[args].apply(plugin, Array.prototype.slice.call(argsc, 1));
-      } else {
-        $.error('Method ' +  args + ' does not exist on jQuery.dmUploader');
-      } 
-    });
+      return false;
+    }
+
+    var plugin = $(this).data(pluginName);
+
+    if(!plugin){
+      $(this).data(pluginName, new DmUploader(this, args));
+    } else if (plugin.methods[args]){
+      return plugin.methods[args].apply(plugin, Array.prototype.slice.call(arguments, 1));
+    } else {
+      $.error('Method ' +  args + ' does not exist on jQuery.dmUploader');
+
+      return false;
+    }
+
+    return true;
   };
 
   // -- Disable Document D&D events to prevent opening the file on browser when we drop them
