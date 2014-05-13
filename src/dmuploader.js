@@ -196,7 +196,10 @@
       return this.queue[id].upload(this, true);
     },
     reset: function() {
-      /* ToDo: Reset plugin resources */
+      /* Reset plugin resources */
+      this.queue = new Array();
+      this.queuePos = -1;
+      this.queueRunning = false;
     }
   };
 
@@ -344,8 +347,6 @@
     this.queuePos++;
 
     if(this.queuePos >= this.queue.length){
-      // Cleanup
-
       this.settings.onComplete.call(this.element);
 
       // Wait until new files are droped
