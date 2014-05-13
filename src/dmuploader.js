@@ -21,6 +21,7 @@
     dataType: null,
     fileName: 'file',
     auto: true,
+    skipChecks: false,
     onInit: function(){},
     onFallbackMode: function() {message},
     onNewFile: function(id, file){},
@@ -40,7 +41,7 @@
 
     this.settings = $.extend({}, defaults, options);
 
-    if(!this.checkBrowser()){
+    if(!this.settings.skipChecks && !this.checkBrowser()){
       return false;
     }
 
@@ -172,6 +173,7 @@
     return true;
   }
 
+  // Public API methods
   DmUploader.prototype.methods = {
     cancel: function(id) {
       /* Stops(if uploading) and Remove the upload from Queue */
@@ -216,6 +218,9 @@
       var xhrobj = $.ajaxSettings.xhr();
       
       return (xhrobj.upload !== undefined);
+    },
+    supportsDND: function() {
+      return (this.checkEvent('drop', this.element) && !this.checkEvent('dragstart', this.element));
     }
   };
 
