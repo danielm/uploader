@@ -4,7 +4,5 @@
 
 - Add some maxSimulaneusUploads some day
 
-- method to know when the upload progress event isn't supported by the browser
-
 - Allow the option to do something like Facebook when draggin-in content:
    ... show/hide (we are goin to just use moar callbacks)

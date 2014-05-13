@@ -211,6 +211,11 @@
       this.queueRunning = false;
 
       return true;
+    },
+    supportsProgress: function() {
+      var xhrobj = $.ajaxSettings.xhr();
+      
+      return (xhrobj.upload !== undefined);
     }
   };
 
