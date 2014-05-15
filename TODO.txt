@@ -4,6 +4,8 @@
 
 - Reset method: call cancelAll first!
 
+- We could use onUploadProgress to also report 'time left' of the upload
+
 - Add maxSimulaneusRequests
 - Add maxFilesPerRequest
 
@@ -11,6 +13,7 @@ Documentation:
   - Add to Readme.md:
       - New option 'auto'
       - New option 'skipChecks'
+      - New option 'headers'
       - New methods:
          * cancel
          * cancelAll
