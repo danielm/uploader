@@ -23,16 +23,16 @@
     auto: true,
     skipChecks: false,
     onInit: function(){},
-    onFallbackMode: function() {message},
-    onNewFile: function(id, file){},
-    onBeforeUpload: function(id){},
+    onFallbackMode: function() {},
+    onNewFile: function(){},
+    onBeforeUpload: function(){},
     onComplete: function(){},
-    onUploadProgress: function(id, percent){},
-    onUploadSuccess: function(id, data){},
-    onUploadError: function(id, message){},
-    onFileTypeError: function(file){},
-    onFileSizeError: function(file){},
-    onFileExtError: function(file){}
+    onUploadProgress: function(){},
+    onUploadSuccess: function(){},
+    onUploadError: function(){},
+    onFileTypeError: function(){},
+    onFileSizeError: function(){},
+    onFileExtError: function(){}
   };
 
   var DmUploader = function(element, options)
@@ -65,12 +65,12 @@
     this.status = 0;
 
     this.id = -1;
-  }
+  };
 
   DmUploaderFile.prototype.setId = function(id)
   {
     this.id = id;
-  }
+  };
 
   DmUploaderFile.prototype.cancel = function()
   {
@@ -89,7 +89,7 @@
     }
 
     return true;
-  }
+  };
 
   DmUploaderFile.prototype.upload = function(widget, single)
   {
@@ -153,7 +153,7 @@
 
         return xhrobj;
       },
-      success: function (data, message, xhr){
+      success: function (data){
         file.status = 2;
         widget.settings.onUploadSuccess.call(widget.element, file.id, data);
       },
@@ -164,14 +164,14 @@
           widget.settings.onUploadError.call(widget.element, file.id, errMsg);
         }
       },
-      complete: function(xhr, textStatus){
+      complete: function(){
         if (widget.settings.auto)
           widget.processQueue();
       }
     });
 
     return true;
-  }
+  };
 
   // Public API methods
   DmUploader.prototype.methods = {
@@ -208,7 +208,7 @@
     },
     reset: function() {
       /* Reset plugin resources */
-      this.queue = new Array();
+      this.queue = [];
       this.queuePos = -1;
       this.queueRunning = false;
 
@@ -247,8 +247,8 @@
 
   DmUploader.prototype.checkEvent = function(eventName, element)
   {
-    var element = element || document.createElement('div');
-    var eventName = 'on' + eventName;
+    element = element || document.createElement('div');
+    eventName = 'on' + eventName;
 
     var isSupported = eventName in element;
 
@@ -275,7 +275,7 @@
   {
     var widget = this;
 
-    widget.queue = new Array();
+    widget.queue = [];
     widget.queuePos = -1;
     widget.queueRunning = false;
 
@@ -326,7 +326,7 @@
       }
 
       // Check file extension
-      if(this.settings.extFilter != null){
+      if(this.settings.extFilter !== null){
         var extList = this.settings.extFilter.toLowerCase().split(';');
 
         var ext = file.name.toLowerCase().split('.').pop();
@@ -379,7 +379,7 @@
     }
 
     this.queue[this.queuePos].upload(this, false);
-  }
+  };
 
   $.fn.dmUploader = function(args){
     // Now we are only able to initialize only one widget at the time
