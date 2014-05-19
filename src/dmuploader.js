@@ -208,14 +208,6 @@
 
       return this.queue[id].upload(this, true);
     },
-    reset: function() {
-      /* Reset plugin resources */
-      this.queue = [];
-      this.queuePos = -1;
-      this.queueRunning = false;
-
-      return true;
-    },
     supportsProgress: function() {
       var xhrobj = $.ajaxSettings.xhr();
       

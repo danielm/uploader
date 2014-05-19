@@ -2,7 +2,7 @@
 
 - Test 'devel' features: manual upload & 'auto' option.
 
-- Reset method: call cancelAll first!
+- add 'reset' API method to reset IDs, free resources, etc.
 
 - We could use onUploadProgress to also report 'time left' of the upload
 
@@ -11,15 +11,12 @@
 
 Documentation:
   - Add to Readme.md:
-      - New option 'auto'
-      - New option 'skipChecks'
-      - New option 'headers'
       - New methods:
          * cancel
          * cancelAll
          * start
-         * reset
          * supportsProgress
+         * supportsDND
 
 - Allow the option to do something like Facebook when draggin-in content:
    ... show/hide (we are goin to just use moar callbacks)

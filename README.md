@@ -45,12 +45,23 @@ Server URL to handle file uploads.
 ###method
 Form method used by the upload request. Default is <code>POST</code>
 
+###auto
+Use an upload queue and auto-upload files. Default is <code>true</code>; set this to <code>false</code> to use the [methods](#methods) to handle the uploads.
+
 ###extraData
 Extra parameters to submit with each file. (Imagine these as 'hidden' inputs)
 ````javascript
 extraData: {
   varName:1,
   varName:'string'
+}
+````
+
+###headers
+Headers to send on each upload request
+````javascript
+headers: {
+  'My-X-Leet-Header':'not-so-secret'
 }
 ````
 
@@ -79,6 +90,9 @@ Field name used to submit the files on each request. Default is <code>file</code
 be able to access to the file doing something like this(if you use PHP): */
 $_FILES[fileName];
 ````
+
+###skipChecks
+Don't perform ANY browser check before plugin initialization. Default is <code>false</code>
 
 ##Callbacks
 
@@ -187,6 +201,22 @@ onFileExtError: function(file){
   console.log('File extension of ' + file.name + ' is not allowed');
 }
 ````
+
+##Methods
+###start
+TBD
+
+###cancel
+TBD
+
+###cancelAll
+TBD
+
+###supportsProgress
+TBD
+
+###cancel
+TBD
 
 ##Changelog
 - [Nov 01 2013] Initial relase.
