@@ -51,7 +51,7 @@
   DmUploader.prototype.checkBrowser = function()
   {
     if(window.FormData === undefined){
-      this.settings.onFallbackMode.call(this.element, 'Browser doesn\'t support From API');
+      this.settings.onFallbackMode.call(this.element, 'Browser doesn\'t support Form API');
 
       return false;
     }
@@ -174,7 +174,7 @@
       return false;
     }
 
-    // and only if new Failes were succefully added
+    // and only if new Files were succefully added
     if(this.queue.length == j){
       return false;
     }
