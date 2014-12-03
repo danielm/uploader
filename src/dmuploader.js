@@ -10,6 +10,14 @@
 (function($) {
   var pluginName = 'dmUploader';
 
+  var FileStatus = {
+    PENDING: 0,
+    UPLOADING: 1,
+    COMPLETED: 2,
+    FAILED: 3,
+    CANCELLED: 4 //(by the user)
+  };
+
   // These are the plugin defaults values
   var defaults = {
     url: document.URL,
@@ -57,13 +65,7 @@
 
     this.jqXHR = null;
 
-    // Status can be:
-    // - 0: pending
-    // - 1: uploading
-    // - 2: completed
-    // - 3: failed
-    // - 4: cancelled (by the user)
-    this.status = 0;
+    this.status = FileStatus.PENDING;
 
     this.id = -1;
   };
@@ -76,13 +78,13 @@
   DmUploaderFile.prototype.cancel = function()
   {
     switch (this.status){
-      case 0:
-        // Pending status...
-        this.status = 4;
+      case FileStatus.PENDING:
+
+        this.status = FileStatus.CANCELLED;
         break;
-      case 1:
-        // Uploading status...
-        this.status = 4;
+      case FileStatus.UPLOADING:
+
+        this.status = FileStatus.CANCELLED;
         this.jqXHR.abort();
         break;
       default:
@@ -97,16 +99,18 @@
     var file = this;
 
     // Cancelled by the user?
-    if (!single && (file.status == 4)){
+    if (!single && (file.status == FileStatus.CANCELLED)){
       widget.processQueue();
 
       return false;
     }
 
     // Uploading, or completed files...
-    if (file.status == 1 || file.status == 2){
-      if (!single)
+    if (file.status == FileStatus.UPLOADING ||
+        file.status == FileStatus.COMPLETED){
+      if (!single){
         widget.processQueue();
+      }
 
       return false;
     }
@@ -122,10 +126,11 @@
 
     widget.settings.onBeforeUpload.call(widget.element, file.id);
 
-    if (!single)
+    if (!single){
       widget.queueRunning = true;
+    }
 
-    file.status = 1;
+    file.status = FileStatus.UPLOADING;
 
     // Ajax Submit
     file.jqXHR = $.ajax({
@@ -156,19 +161,20 @@
         return xhrobj;
       },
       success: function (data){
-        file.status = 2;
+        file.status = FileStatus.COMPLETED;
         widget.settings.onUploadSuccess.call(widget.element, file.id, data);
       },
       error: function (xhr, status, errMsg){
         // If the status is: cancelled (by the user) don't invoke the error callback
-        if (file.status != 4){
-          file.status = 3;
+        if (file.status != FileStatus.CANCELLED){
+          file.status = FileStatus.FAILED;
           widget.settings.onUploadError.call(widget.element, file.id, errMsg);
         }
       },
       complete: function(){
-        if (widget.settings.auto)
+        if (widget.settings.auto){
           widget.processQueue();
+        }
       }
     });
 
@@ -179,8 +185,9 @@
   DmUploader.prototype.methods = {
     cancel: function(id) {
       /* Stops(if uploading) and Remove the upload from Queue */
-      if (id > (this.queue.length - 1))
+      if (id > (this.queue.length - 1)){
         return false;
+      }
 
       return this.queue[id].cancel();
     },
@@ -189,22 +196,25 @@
       var nCancels = 0;
 
       $.each(this.queue, function(id, file){
-        if (file.cancel())
+        if (file.cancel()){
           nCancels++;
+        }
       });
 
       return nCancels;
     },
     start: function(id) {
       /* Start or re-try the upload */
-      if (id > (this.queue.length - 1))
+      if (id > (this.queue.length - 1)){
         return false;
+      }
 
       // If we are using a File queue only allow to start (or retry)
       // files that that were cancelled or failed (NOT files that are 'next' in
       // our queue.
-      if (this.settings.auto && (id >= this.queuePos))
+      if (this.settings.auto && (id >= this.queuePos)){
         return false;
+      }
 
       return this.queue[id].upload(this, true);
     },
@@ -351,8 +361,9 @@
       return false;
     }
 
-    if (this.settings.auto)
+    if (this.settings.auto){
       this.processQueue();
+    }
 
     return true;
   };
