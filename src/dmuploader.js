@@ -209,12 +209,12 @@
     var fd = new FormData();
     fd.append(widget.settings.fileName, file);
 
+    widget.settings.onBeforeUpload.call(widget.element, widget.queuePos);
+
     // Append extra Form Data
     $.each(widget.settings.extraData, function(exKey, exVal){
       fd.append(exKey, exVal);
     });
-
-    widget.settings.onBeforeUpload.call(widget.element, widget.queuePos);
 
     widget.queueRunning = true;
 
