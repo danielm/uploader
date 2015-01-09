@@ -30,7 +30,10 @@
     onUploadError: function(id, message){},
     onFileTypeError: function(file){},
     onFileSizeError: function(file){},
-    onFileExtError: function(file){}
+    onFileExtError: function(file){},
+    onDragOver: function(file){},
+    onDrop: function(file){},
+    onDragLeave: function(file){}
   };
 
   var DmUploader = function(element, options)
@@ -100,14 +103,24 @@
     var widget = this;
 
     widget.queue = new Array();
+
     widget.queuePos = -1;
     widget.queueRunning = false;
 
     // -- Drag and drop event
+
+      widget.element.on('dragover', function(evt){
+          widget.onDragOver(evt.originalEvent.dataTransfer.files);
+      });
+
+      widget.element.on('dragleave', function(evt){
+          widget.onDragLeave(evt.originalEvent.dataTransfer.files);
+      });
+
     widget.element.on('drop', function (evt){
       evt.preventDefault();
       var files = evt.originalEvent.dataTransfer.files;
-
+      widget.onDrop(files);
       widget.queueFiles(files);
     });
 
@@ -122,6 +135,23 @@
         
     this.settings.onInit.call(this.element);
   };
+
+  DmUploader.prototype.onDragOver = function(file){
+      this.settings.onDragOver.call(this.element, file);
+  }
+
+  DmUploader.prototype.onDrop = function(file){
+      this.settings.onDrop.call(this.element, file);
+  } //dragleave
+
+  DmUploader.prototype.onDragLeave = function(file){
+    this.settings.onDragLeave.call(this.element, file);
+  }
+
+
+
+
+
 
   DmUploader.prototype.queueFiles = function(files)
   {
@@ -266,7 +296,16 @@
   };
 
   // -- Disable Document D&D events to prevent opening the file on browser when we drop them
-  $(document).on('dragenter', function (e) { e.stopPropagation(); e.preventDefault(); });
-  $(document).on('dragover', function (e) { e.stopPropagation(); e.preventDefault(); });
-  $(document).on('drop', function (e) { e.stopPropagation(); e.preventDefault(); });
+  $(document).on('dragenter', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+  });
+  $(document).on('dragover', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+  });
+  $(document).on('drop', function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+  });
 })(jQuery);
