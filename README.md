@@ -63,6 +63,9 @@ Regular expression to match file types for pre-submit validation. Default is <co
 ###extFilter
 Extension(s) comma separted for pre-submit validation. Default is <code>NULL</code>. Ej: <code>jpg;png;gif</code>
 
+###maxFiles
+Sets how many files can be uploaded by the user. Default is <code>0</code> (no limit)
+
 ###dataType
 Data type corresponds to what the server is going to return after a successful upload.
 
@@ -182,6 +185,15 @@ onFileSizeError: function(file){
 ###onFileExtError
 Called when the file extension pre-submit validation fails.
 See (See [settings](#extfilter) for more.)
+````javascript
+onFileExtError: function(file){
+  console.log('File extension of ' + file.name + ' is not allowed');
+}
+````
+
+###onFilesMaxError
+Called when the user reaches the upload limit (number of files).
+See (See [settings](#maxfiles) for more.)
 ````javascript
 onFileExtError: function(file){
   console.log('File extension of ' + file.name + ' is not allowed');

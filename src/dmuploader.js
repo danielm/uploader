@@ -16,7 +16,7 @@
     method: 'POST',
     extraData: {},
     maxFileSize: 0,
-    maxFiles   : 10,
+    maxFiles: 0,
     allowedTypes: '*',
     extFilter: null,
     dataType: null,
@@ -165,10 +165,9 @@
       }
             
       // Check max files
-      if( this.settings.maxFiles != null ) {
-
-        if( this.queue.length >= this.settings.maxFiles ) {
-          this.settings.onFilesMaxError.call( this.element, file );
+      if(this.settings.maxFiles > 0) {
+        if(this.queue.length >= this.settings.maxFiles) {
+          this.settings.onFilesMaxError.call(this.element, file);
 
           continue;
         }
