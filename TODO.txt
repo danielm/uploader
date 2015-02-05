@@ -15,6 +15,8 @@ Major changes before 0.2.0
     new start() and cancell() from previous points
   - Also, before start the upload of a file coming from queue check
     that is  not uploading already.
+  - Review new features added from pull requests and how can be integrated
+    to the new version.
 
 ------------------------------------------------------------------------
 
