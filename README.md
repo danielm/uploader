@@ -195,8 +195,8 @@ onFileExtError: function(file){
 Called when the user reaches the upload limit (number of files).
 See (See [settings](#maxfiles) for more.)
 ````javascript
-onFileExtError: function(file){
-  console.log('File extension of ' + file.name + ' is not allowed');
+onFilesMaxError: function(file){
+  console.log(file.name + ' cannot be added to queue due to upload limits.');
 }
 ````
 
