@@ -16,6 +16,7 @@
     method: 'POST',
     extraData: {},
     maxFileSize: 0,
+    maxFiles   : 10,
     allowedTypes: '*',
     extFilter: null,
     dataType: null,
@@ -30,7 +31,8 @@
     onUploadError: function(id, message){},
     onFileTypeError: function(file){},
     onFileSizeError: function(file){},
-    onFileExtError: function(file){}
+    onFileExtError: function(file){},
+    onFilesMaxError: function(file){}
   };
 
   var DmUploader = function(element, options)
@@ -157,6 +159,16 @@
 
         if($.inArray(ext, extList) < 0){
           this.settings.onFileExtError.call(this.element, file);
+
+          continue;
+        }
+      }
+            
+      // Check max files
+      if( this.settings.maxFiles != null ) {
+
+        if( this.queue.length >= this.settings.maxFiles ) {
+          this.settings.onFilesMaxError.call( this.element, file );
 
           continue;
         }
