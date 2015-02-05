@@ -174,7 +174,7 @@
       return false;
     }
 
-    // and only if new Files were succefully added
+    // and only if new Failes were successfully added
     if(this.queue.length == j){
       return false;
     }
