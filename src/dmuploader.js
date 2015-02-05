@@ -209,7 +209,13 @@
     var fd = new FormData();
     fd.append(widget.settings.fileName, file);
 
-    widget.settings.onBeforeUpload.call(widget.element, widget.queuePos);
+    // Return from client function (default === undefined)
+    var can_continue = widget.settings.onBeforeUpload.call(widget.element, widget.queuePos);
+    
+    // If the client function doesn't return FALSE then continue
+    if( false === can_continue ) {
+      return;
+    }
 
     // Append extra Form Data
     $.each(widget.settings.extraData, function(exKey, exVal){
