@@ -10,6 +10,9 @@ As for new features im open to suggestions, but please before doing so read the 
 Dual licensed under the MIT and GPL licenses.
 Created by Daniel Morales. [Contact Me](mailto:daniminas@gmail.com) for more info or anything you want :)
 
+#Fork information
+This fork of original plugin aims to make some enhancement (easier usage) and allow fallback mode for IE8,9. Now is under development, therefore do nit use it in production.
+
 [View Changelog](#changelog)
 
 ##Demo
@@ -21,7 +24,7 @@ Image Upload w/Preview: http://danielm.herokuapp.com/demos/dnd/image-preview.php
 
 ##API
 ````javascript
-$("#drop-area-div").dmUploader(options);
+$("#drop-area-div").FileUploader(options);
 ````
 This way you can initialize the plugin. As parameter you can set all variables you want and the same goes for callbacks;
 down bellow you can see a list of what [options](#options) and [callbacks](#callbacks) are availabe.
