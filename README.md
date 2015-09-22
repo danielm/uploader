@@ -11,7 +11,7 @@ Dual licensed under the MIT and GPL licenses.
 Created by Daniel Morales. [Contact Me](mailto:daniminas@gmail.com) for more info or anything you want :)
 
 #Fork information
-This fork of original plugin aims to make some enhancement (easier usage) and allow fallback mode for IE8,9. Now is under development, therefore do nit use it in production.
+This fork of original plugin aims to make some enhancement (easier usage) and allow fallback mode for IE8,9. Now is under development, therefore do not use it in production.
 
 [View Changelog](#changelog)
 
@@ -86,6 +86,13 @@ be able to access to the file doing something like this(if you use PHP): */
 $_FILES[fileName];
 ````
 
+###fileItem
+String as a pattern to create item in file list. Default is <code><span class="filename"></code>.
+When defined <code>fileContainer</code>, then default callback <code>onNewFile</code> creates new item from that pattern, adds attribute <code>title</code> containing file name and content is file name too. This element append to the fileContainer.
+
+###fileContainer
+String (valid jQuery selector like '#myFiles .fileContainer') or jQuery element where is uploaded filename listed. See <code>fileItem</code> and <code>onNewFile</code> callback.
+
 ##Callbacks
 
 ###onInit
@@ -122,6 +129,8 @@ onNewFile: function(id, file){
 }
 ````
 **Note**: As example; if a user selects/drag two files this function will be called twice.
+
+Default function checks if is set options <code>fileContainer</code> nad <code>fileItem</code>, then creates item and appends it to fileContainer.
 
 ###onBeforeUpload
 Called right before a upload request is sent.

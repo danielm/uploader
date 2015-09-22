@@ -1,6 +1,6 @@
 (function ($, window, document, undefined) {
     "use strict";
-    var pluginName = "FileUploader",
+    var pluginName = "fileUploader",
             defaults = {
                 propertyName: "value",
                 url: document.URL,
@@ -12,17 +12,28 @@
                 extFilter: null,
                 dataType: null,
                 fileName: 'file',
+                fileItem: '<span class="filename">',
+                fileContainer: null,
+                progressBar: null,
                 onInit: function () {
                 },
                 onFallbackMode: function (message) {
                 },
                 onNewFile: function (id, file) {
+                    var widget = this;
+                    if (widget.checkVariable(widget.settings.progressBar) && widget.checkVariable(widget.settings.fileContainer) && typeof widget.settings.fileItem === 'string') {
+                        $(widget.settings.fileItem).attr('title', file.name).text(file.name).appendTo(widget.settings.fileContainer);
+                    }                    
                 },
                 onBeforeUpload: function (id) {
                 },
                 onComplete: function () {
                 },
                 onUploadProgress: function (id, percent) {
+                    var widget = this;
+                    if (widget.checkVariable(widget.settings.progressBar)) {
+                        $(widget.settings.progressBar).width(percent);
+                    }
                 },
                 onUploadSuccess: function (id, data) {
                 },
@@ -49,6 +60,7 @@
             return false;
         }
         this.init();
+        return true;
     }
 
     // Avoid Plugin.prototype conflicts
@@ -90,21 +102,21 @@
             return true;
         },
         checkEvent: function (eventName, element) {
-            var element = element || document.createElement('div');
-            var eventName = 'on' + eventName;
-            var isSupported = eventName in element;
+            var elem = element || document.createElement('div');
+            var onEventName = 'on' + eventName;
+            var isSupported = onEventName in elem;
 
             if (!isSupported) {
-                if (!element.setAttribute) {
+                if (!elem.setAttribute) {
                     element = document.createElement('div');
                 }
-                if (element.setAttribute && element.removeAttribute) {
-                    element.setAttribute(eventName, '');
-                    isSupported = typeof element[eventName] === 'function';
-                    if (typeof element[eventName] !== 'undefined') {
-                        element[eventName] = undefined;
+                if (elem.setAttribute && elem.removeAttribute) {
+                    elem.setAttribute(onEventName, '');
+                    isSupported = typeof elem[onEventName] === 'function';
+                    if (typeof elem[onEventName] !== 'undefined') {
+                        elem[onEventName] = undefined;
                     }
-                    element.removeAttribute(eventName);
+                    elem.removeAttribute(onEventName);
                 }
             }
 
@@ -241,8 +253,14 @@
                 }
             });
         },
-        otherFunction: function () {
-            console.log('other');
+        removeFile: function (filename) {
+            var widget = this;
+            widget.queue = $.grep(widget.queue, function(item){return item.name !== filename;});            
+        },
+        //private functions
+        //test if item is set and string or jQuery element. String is supposed to be an selector (not verified).
+        checkVariable: function(item) {
+            return item !== null && (typeof item === 'string' || item instanceof jQuery);
         }
     });
 
@@ -253,12 +271,11 @@
             if (!instance) {
                 $.data(this, "plugin_" + pluginName, new Plugin(this, options));
             } else {
-                if(typeof options === 'string') {
+                if (typeof options === 'string' && $.inArray(options, ['removeFile']) === 0) {
                     instance[options].apply(instance, args);
                 }
             }
         });
-        //return this.data("plugin_" + pluginName);
     };
     // -- Disable Document D&D events to prevent opening the file on browser when we drop them
     $(document).on('dragenter', function (e) {
