@@ -7,6 +7,10 @@
     <title>Daniel.uy - Online Code Demos</title>
 
     <link rel="stylesheet" href="../demos/css/simple-demo.css" rel="stylesheet" />
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+
+    <script type="text/javascript" src="../../src/fileuploader.js"></script>
   </head>
   <body>
     
@@ -45,13 +49,9 @@
       
       <div id="footer">
         &copy; 2014 - <a href="http://www.daniel.com.uy/">Daniel Morales</a>
+        <script src="../src/fileuploader.js" type="text/javascript"></script>
       </div>
     </div>
-
-    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-
-    <script type="text/javascript" src="../../src/dmuploader.min.js"></script>
 
     <script type="text/javascript">
       
@@ -89,11 +89,11 @@
       }
       
       // Upload Plugin itself
-      $('#drag-and-drop-zone').dmUploader({
+      /*
+      $('#drag-and-drop-zone').VnUploader({
         url: '/demos/dnd/upload.php',
         dataType: 'json',
         allowedTypes: 'image/*',
-        /*extFilter: 'jpg;png;gif',*/
         onInit: function(){
           add_log('Penguin initialized :)');
         },
@@ -136,13 +136,11 @@
         onFileSizeError: function(file){
           add_log('File \'' + file.name + '\' cannot be added: size excess limit');
         },
-        /*onFileExtError: function(file){
-          $.danidemo.addLog('#demo-debug', 'error', 'File \'' + file.name + '\' has a Not Allowed Extension');
-        },*/
         onFallbackMode: function(message){
           alert('Browser not supported(do something else here!): ' + message);
         }
       });
+      */
     </script>
 
   </body>
