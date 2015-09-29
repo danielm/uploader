@@ -24,7 +24,7 @@ Image Upload w/Preview: http://danielm.herokuapp.com/demos/dnd/image-preview.php
 $("#drop-area-div").dmUploader(options);
 ````
 This way you can initialize the plugin. As parameter you can set all variables you want and the same goes for callbacks;
-down bellow you can see a list of what [options](#options) and [callbacks](#callbacks) are availabe.
+down bellow you can see a list of what [options](#options) and [callbacks](#callbacks) are available.
 
 ##Markup
 This is the simple html markup. The file input is optional but it provides an alternative way to select files for the user(check the online demo to se how to hide/style it)
@@ -111,7 +111,7 @@ the upload.
 **From now on other callbacks referring to this upload will use the same <code>id</code>**.
 ````javascript
 onNewFile: function(id, file){
-  /* Fields availabe are:
+  /* Fields available are:
      - file.name
      - file.type
      - file.size (in bytes)
