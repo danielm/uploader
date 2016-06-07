@@ -251,7 +251,7 @@
           xhrobj.upload.addEventListener('progress', function(event) {
             var percent = 0;
             var position = event.loaded || event.position;
-            var total = event.total || e.totalSize;
+            var total = event.total || event.totalSize;
             if(event.lengthComputable){
               percent = Math.ceil(position / total * 100);
             }
