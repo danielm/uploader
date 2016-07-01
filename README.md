@@ -98,7 +98,7 @@ This is called when the Ajax/File or Drag and Drop API isn't supported by the br
 up to you to notify the user, change something on the UI, etc..
 ````javascript
 onFallbackMode: function(message){
-  console.log('Upload plugin can't be initialized: ' + message);
+  console.log('Upload plugin can\'t be initialized: ' + message);
 }
 ````
 **Note**: Even when D&D isn't supported by the browser user may be able to upload via the
