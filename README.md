@@ -140,7 +140,7 @@ onComplete: function(){
 If the browser supports upload progress this will be called when we have an update.
 ````javascript
 onUploadProgress: function(id, percent){
-  console.log('Upload of #' + id ' is at %' + percent);
+  console.log('Upload of #' + id + ' is at %' + percent);
   // do something cool here!
 }
 ````
