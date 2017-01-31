@@ -278,6 +278,9 @@
     return this.each(function(){
       if(!$.data(this, pluginName)){
         $.data(this, pluginName, new DmUploader(this, options));
+      } else { 
+        var plugin = $.data(this, pluginName);
+        plugin.settings = $.extend({}, plugin.settings, options);
       }
     });
   };
