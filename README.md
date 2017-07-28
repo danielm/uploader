@@ -175,6 +175,14 @@ onUploadError: function(id, message){
 }
 ````
 
+###onUploadCancel
+Called after a file upload was aborted by user.
+````javascript
+onUploadSuccess: function(id){
+  console.log('File aborted #' + id);
+}
+````
+
 ###onFileTypeError
 Called when the mimetype pre-submit validation fails.
 See (See [settings](#allowedtypes) for more.)
