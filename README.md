@@ -13,11 +13,9 @@ Created by Daniel Morales. [Contact Me](mailto:daniminas@gmail.com) for more inf
 [View Changelog](#changelog)
 
 ## Demo
-Using Bootstrap: http://danielm.herokuapp.com/demos/dnd/
+Using: https://danielmg.org/demo/java-script/bootstrap-drag-and-drop-uploader
 
-Plain HTML: http://danielm.herokuapp.com/demos/dnd/simple.php
-
-Image Upload w/Preview: http://danielm.herokuapp.com/demos/dnd/image-preview.php
+Image Upload w/Preview: https://danielmg.org/demo/java-script/drag-and-drop-image-uploader
 
 ## API
 ````javascript
