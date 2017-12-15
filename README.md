@@ -1,4 +1,4 @@
-#JQuery File Uploader
+# JQuery File Uploader
 JQuery plugin to drag and drop files, including ajax upload and progress bar. The idea for this plugin is to keep it very simple; other options/plugins i found mess up a lot with the markup and provide some really 'hacky' ways to make it available for prehistoric browsers.
 
 The focus will be for **modern browsers**, but also providing a method to know when is the plugin is not supported; with an easy interface to use on **any design** you come up.
@@ -12,21 +12,21 @@ Created by Daniel Morales. [Contact Me](mailto:daniminas@gmail.com) for more inf
 
 [View Changelog](#changelog)
 
-##Demo
+## Demo
 Using Bootstrap: http://danielm.herokuapp.com/demos/dnd/
 
 Plain HTML: http://danielm.herokuapp.com/demos/dnd/simple.php
 
 Image Upload w/Preview: http://danielm.herokuapp.com/demos/dnd/image-preview.php
 
-##API
+## API
 ````javascript
 $("#drop-area-div").dmUploader(options);
 ````
 This way you can initialize the plugin. As parameter you can set all variables you want and the same goes for callbacks;
 down bellow you can see a list of what [options](#options) and [callbacks](#callbacks) are available.
 
-##Markup
+## Markup
 This is the simple html markup. The file input is optional but it provides an alternative way to select files for the user(check the online demo to se how to hide/style it)
 ````html
 <div id="drop-area-div" style="width:400px;height:300px;">
@@ -37,15 +37,15 @@ This is the simple html markup. The file input is optional but it provides an al
 ````
 Even if you test all this in different browsers I recommend to add some kind of link to a basic uploader, this is still a new feature on several platforms.
 
-##Options
+## Options
 
-###url
+### url
 Server URL to handle file uploads.
 
-###method
+### method
 Form method used by the upload request. Default is <code>POST</code>
 
-###extraData
+### extraData
 Extra parameters to submit with each file. (Imagine these as 'hidden' inputs)
 ````javascript
 extraData: {
@@ -54,19 +54,19 @@ extraData: {
 }
 ````
 
-###maxFileSize
+### maxFileSize
 Max size of each individual file for pre-submit validation. Default is <code>0</code> (no limit)
 
-###allowedTypes
+### allowedTypes
 Regular expression to match file types for pre-submit validation. Default is <code>'\*'</code>. Ej: <code>image/*</code>
 
-###extFilter
+### extFilter
 Extension(s) comma separted for pre-submit validation. Default is <code>NULL</code>. Ej: <code>jpg;png;gif</code>
 
-###maxFiles
+### maxFiles
 Sets how many files can be uploaded by the user. Default is <code>0</code> (no limit)
 
-###dataType
+### dataType
 Data type corresponds to what the server is going to return after a successful upload.
 
 Default is <code>null</code> which means Jquery will try to 'guess' depending of what the server returns.
@@ -75,7 +75,7 @@ Other values can be: <code>xml</code>, <code>json</code>, <code>script</code>, o
 
 Ref: http://api.jquery.com/jquery.ajax/
 
-###fileName
+### fileName
 Field name used to submit the files on each request. Default is <code>file</code>
 ````php
 /* As example if you set this to 'file', on the server side code you will
@@ -83,9 +83,9 @@ be able to access to the file doing something like this(if you use PHP): */
 $_FILES[fileName];
 ````
 
-##Callbacks
+## Callbacks
 
-###onInit
+### onInit
 Called once plugin is loaded, browser checks passed and it's ready to use.
 ````javascript
 onInit: function(){
@@ -93,7 +93,7 @@ onInit: function(){
 }
 ````
 
-###onFallbackMode
+### onFallbackMode
 This is called when the Ajax/File or Drag and Drop API isn't supported by the browser. It's
 up to you to notify the user, change something on the UI, etc..
 ````javascript
@@ -104,7 +104,7 @@ onFallbackMode: function(message){
 **Note**: Even when D&D isn't supported by the browser user may be able to upload via the
 file input (*if you included that on the HTML markup*).
 
-###onNewFile
+### onNewFile
 Called every time a file is added to the upload queue. <code>id</code> is a number to identify
 the upload.
 
@@ -120,7 +120,7 @@ onNewFile: function(id, file){
 ````
 **Note**: As example; if a user selects/drag two files this function will be called twice.
 
-###onBeforeUpload
+### onBeforeUpload
 Called right before a upload request is sent.
 ````javascript
 onBeforeUpload: function(id){
@@ -128,7 +128,7 @@ onBeforeUpload: function(id){
 }
 ````
 
-###onComplete
+### onComplete
 Called after all pending upload been processed (this include error **and** successful uploads)
 ````javascript
 onComplete: function(){
@@ -136,7 +136,7 @@ onComplete: function(){
 }
 ````
 
-###onUploadProgress
+### onUploadProgress
 If the browser supports upload progress this will be called when we have an update.
 ````javascript
 onUploadProgress: function(id, percent){
@@ -145,7 +145,7 @@ onUploadProgress: function(id, percent){
 }
 ````
 
-###onUploadSuccess
+### onUploadSuccess
 Called after a file upload was completed without errors. <code>data</code> contains
 the server response (See [settings](#datatype)) for more
 ````javascript
@@ -156,7 +156,7 @@ onUploadSuccess: function(id, data){
 }
 ````
 
-###onUploadError
+### onUploadError
 Triggers when some kind of connection problem happened(timeout, etc..)
 ````javascript
 onUploadError: function(id, message){
@@ -164,7 +164,7 @@ onUploadError: function(id, message){
 }
 ````
 
-###onFileTypeError
+### onFileTypeError
 Called when the mimetype pre-submit validation fails.
 See (See [settings](#allowedtypes) for more.)
 ````javascript
@@ -173,7 +173,7 @@ onFileTypeError: function(file){
 }
 ````
 
-###onFileSizeError
+### onFileSizeError
 Called when the file size pre-submit validation fails.
 See (See [settings](#maxfilesize) for more.)
 ````javascript
@@ -182,7 +182,7 @@ onFileSizeError: function(file){
 }
 ````
 
-###onFileExtError
+### onFileExtError
 Called when the file extension pre-submit validation fails.
 See (See [settings](#extfilter) for more.)
 ````javascript
@@ -191,7 +191,7 @@ onFileExtError: function(file){
 }
 ````
 
-###onFilesMaxError
+### onFilesMaxError
 Called when the user reaches the upload limit (number of files).
 See (See [settings](#maxfiles) for more.)
 ````javascript
@@ -200,7 +200,7 @@ onFilesMaxError: function(file){
 }
 ````
 
-##Changelog
+## Changelog
 - [Nov 01 2013] Initial relase.
 - [Feb 08 2014] Project moved to Github.
 - [Feb 15 2014] Added option for pre-submit file extension validation. View: [extFilter](#extfilter)/[onFileExtError](#onfileexterror)
