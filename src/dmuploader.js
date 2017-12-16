@@ -230,6 +230,7 @@
 
     // Append extra Form Data
     $.each(widget.settings.extraData, function(exKey, exVal){
+      if (typeof exVal == 'function') { exVal = exVal(); }
       fd.append(exKey, exVal);
     });
 
