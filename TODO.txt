@@ -18,6 +18,15 @@ Major changes before 0.2.0
   - Review new features added from pull requests and how can be integrated
     to the new version.
 
+---
+
+Main changes
+ - validators now are  !== null
+ - extraData accepts now accepts a callback
+ - ondragover ondragleave ondrop
+
+
+
 ------------------------------------------------------------------------
 
 Documentation:
@@ -25,6 +34,7 @@ Documentation:
       - New methods:
          * cancel
          * start
+         * reset
          * supportsProgress
          * supportsDND
 
@@ -32,7 +42,7 @@ Documentation:
 
 - Test 'devel' features: manual upload & 'auto' option.
 
-- add 'reset' API method to reset IDs, free resources, etc.
+- add 'reset' API method to reset IDs, free resources, etc. (cleanup)
 
 - We could use onUploadProgress to also report 'time left' of the upload
 

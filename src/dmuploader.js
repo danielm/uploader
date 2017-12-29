@@ -23,8 +23,8 @@
     method: 'POST',
     extraData: {},
     headers: {},
-    maxFileSize: 0,
-    maxFiles: 0,
+    maxFileSize: null,
+    maxFiles: null,
     allowedTypes: '*',
     extFilter: null,
     dataType: null,
@@ -42,7 +42,10 @@
     onFileTypeError: function(file){},
     onFileSizeError: function(file){},
     onFileExtError: function(file){},
-    onFilesMaxError: function(file){}
+    onFilesMaxError: function(file){},
+    onDragOver: function(){},
+    onDragLeave: function(){},
+    onDrop: function(){}
   };
 
   var DmUploader = function(element, options)
@@ -129,7 +132,11 @@
     }
 
     // Append extra Form Data
-    $.each(widget.settings.extraData, function(exKey, exVal){
+    var customData = widget.settings.extraData;
+    if (typeof(widget.settings.extraData) === "function"){
+      customData = widget.settings.extraData.call(widget.element, file.id);
+    }
+    $.each(customData, function(exKey, exVal){
       fd.append(exKey, exVal);
     });
 
@@ -232,6 +239,11 @@
     },
     supportsDND: function() {
       return (this.checkEvent('drop', this.element) && !this.checkEvent('dragstart', this.element));
+    },
+    reset: function() {
+      console.log('TODO: Reset plugin');
+
+      return true;
     }
   };
 
@@ -290,12 +302,14 @@
     widget.queuePos = -1;
     widget.queueRunning = false;
 
-    // -- Drag and drop event
+    // -- Drag and drop events
     widget.element.on('drop', function (evt){
       evt.preventDefault();
       var files = evt.originalEvent.dataTransfer.files;
 
       widget.queueFiles(files);
+
+      widget.settings.onDrop.call(this.element);
     });
 
     //-- Optional File input to make a clickable area
@@ -306,7 +320,17 @@
 
       $(this).val('');
     });
-        
+
+    //-- These two events/callbacks are onlt to maybe do some fancy visual stuff
+    widget.element.on('dragover', function(evt){
+      widget.settings.onDragOver.call(this.element);
+    });
+
+    widget.element.on('dragleave', function(evt){
+      widget.settings.onDragLeave.call(this.element);
+    });
+
+    // We good to go, tell them!
     this.settings.onInit.call(this.element);
   };
 
@@ -319,7 +343,7 @@
       var file = files[i];
 
       // Check file size
-      if((this.settings.maxFileSize > 0) &&
+      if((this.settings.maxFileSize !== null) &&
           (file.size > this.settings.maxFileSize)){
 
         this.settings.onFileSizeError.call(this.element, file);
@@ -372,7 +396,7 @@
       return false;
     }
 
-    // and only if new Files were succefully added
+    // and only if new Files were successfully added
     if(this.queue.length == j){
       return false;
     }
@@ -402,31 +426,49 @@
     this.queue[this.queuePos].upload(this, false);
   };
 
-  $.fn.dmUploader = function(args){
-    // Now we are only able to initialize only one widget at the time
-    if($(this).length != 1){
-      $.error('Need one element to initialize jQuery.dmUploader');
+  $.fn.dmUploader = function(options){
+    var args = arguments;
 
-      return false;
-    }
+    if (typeof options === 'string'){
+      this.each(function(){
+        var plugin = $.data(this, pluginName);
 
-    var plugin = $(this).data(pluginName);
+        console.log(plugin.methods);
 
-    if(!plugin){
-      $(this).data(pluginName, new DmUploader(this, args));
-    } else if (plugin.methods[args]){
-      return plugin.methods[args].apply(plugin, Array.prototype.slice.call(arguments, 1));
+        if (plugin instanceof DmUploader){
+          if (options === 'destroy'){
+            if(plugin.methods.reset()){
+              $.removeData(this, pluginName, null);
+            }
+          } else if (typeof plugin.methods[options] === 'function'){
+            plugin.methods[options].apply(plugin, Array.prototype.slice.call(args, 1));
+          } else {
+            $.error('Method ' +  options + ' does not exist on jQuery.dmUploader');
+          }
+        } else {
+          $.error('Unknown plugin data found by jQuery.dmUploader');
+        }
+      });
     } else {
-      $.error('Method ' +  args + ' does not exist on jQuery.dmUploader');
-
-      return false;
+      return this.each(function (){
+        if(!$.data(this, pluginName)){
+          $.data(this, pluginName, new DmUploader(this, options));
+        }
+      });
     }
-
-    return true;
   };
 
   // -- Disable Document D&D events to prevent opening the file on browser when we drop them
-  $(document).on('dragenter', function (e) { e.stopPropagation(); e.preventDefault(); });
-  $(document).on('dragover', function (e) { e.stopPropagation(); e.preventDefault(); });
-  $(document).on('drop', function (e) { e.stopPropagation(); e.preventDefault(); });
+  $(document).on('dragenter', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  });
+  $(document).on('dragover', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  });
+  $(document).on('drop', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  });
 })(jQuery);
