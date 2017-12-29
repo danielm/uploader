@@ -1,10 +1,9 @@
 /*
  * dmuploader.js - Jquery File Uploader - 0.1
- * http://www.daniel.com.uy/projects/jquery-file-uploader/
+ * https://github.com/danielm/uploader
  * 
- * Copyright (c) 2013-2014 Daniel Morales
+ * Copyright (c) 2013-2017 Daniel Morales
  * Dual licensed under the MIT and GPL licenses.
- * http://www.daniel.com.uy/doc/license/
  */
 
 (function($) {
@@ -25,6 +24,7 @@
     extraData: {},
     headers: {},
     maxFileSize: 0,
+    maxFiles: 0,
     allowedTypes: '*',
     extFilter: null,
     dataType: null,
@@ -32,16 +32,17 @@
     auto: true,
     skipChecks: false,
     onInit: function(){},
-    onFallbackMode: function() {},
-    onNewFile: function(){},
-    onBeforeUpload: function(){},
+    onFallbackMode: function(message) {},
+    onNewFile: function(id, file){},
+    onBeforeUpload: function(id){},
     onComplete: function(){},
-    onUploadProgress: function(){},
-    onUploadSuccess: function(){},
-    onUploadError: function(){},
-    onFileTypeError: function(){},
-    onFileSizeError: function(){},
-    onFileExtError: function(){}
+    onUploadProgress: function(id, percent){},
+    onUploadSuccess: function(id, data){},
+    onUploadError: function(id, message){},
+    onFileTypeError: function(file){},
+    onFileSizeError: function(file){},
+    onFileExtError: function(file){},
+    onFilesMaxError: function(file){}
   };
 
   var DmUploader = function(element, options)
@@ -119,12 +120,18 @@
     var fd = new FormData();
     fd.append(widget.settings.fileName, file.file);
 
+    // Return from client function (default === undefined)
+    var can_continue = widget.settings.onBeforeUpload.call(widget.element, file.id);
+
+    // If the client function doesn't return FALSE then continue
+    if( false === can_continue ) {
+      return;
+    }
+
     // Append extra Form Data
     $.each(widget.settings.extraData, function(exKey, exVal){
       fd.append(exKey, exVal);
     });
-
-    widget.settings.onBeforeUpload.call(widget.element, file.id);
 
     if (!single){
       widget.queueRunning = true;
@@ -337,6 +344,15 @@
 
         if($.inArray(ext, extList) < 0){
           this.settings.onFileExtError.call(this.element, file);
+
+          continue;
+        }
+      }
+
+      // Check max files
+      if(this.settings.maxFiles !== null) {
+        if(this.queue.length >= this.settings.maxFiles) {
+          this.settings.onFilesMaxError.call(this.element, file);
 
           continue;
         }
