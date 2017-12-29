@@ -433,8 +433,6 @@
       this.each(function(){
         var plugin = $.data(this, pluginName);
 
-        console.log(plugin.methods);
-
         if (plugin instanceof DmUploader){
           if (options === 'destroy'){
             if(plugin.methods.reset()){

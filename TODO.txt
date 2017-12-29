@@ -18,6 +18,8 @@ Major changes before 0.2.0
   - Review new features added from pull requests and how can be integrated
     to the new version.
 
+  - Check if some each() are necesary during creation!
+
 ---
 
 Main changes

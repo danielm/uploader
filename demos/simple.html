@@ -48,10 +48,12 @@
       </div>
     </div>
 
-    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
 
-    <script type="text/javascript" src="../../src/dmuploader.min.js"></script>
+    <script type="text/javascript" src="../src/dmuploader.js"></script>
 
     <script type="text/javascript">
       
@@ -90,10 +92,21 @@
       
       // Upload Plugin itself
       $('#drag-and-drop-zone').dmUploader({
-        url: '/demos/dnd/upload.php',
+        url: '/demos/upload.phpa',
         dataType: 'json',
-        allowedTypes: 'image/*',
-        /*extFilter: 'jpg;png;gif',*/
+        auto: false,
+        onDragOver: function(){
+          console.log('draggin over');
+        },
+        onDragLeave: function(){
+          console.log('draggin leave');
+        },
+        onDrop: function(){
+          console.log('droped!');
+        },
+        extraData: function() {
+          return {name: "daniel"}
+        },
         onInit: function(){
           add_log('Penguin initialized :)');
         },
