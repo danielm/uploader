@@ -19,8 +19,8 @@
 
   // These are the plugin defaults values
   var defaults = {
-    queue: true,
     auto: true,
+    queue: true,
     url: document.URL,
     method: 'POST',
     extraData: {},
@@ -60,13 +60,111 @@
 
   DmUploaderFile.prototype.upload = function(widget)
   {
+    var file = this;
+
+    if (!file.canUpload()){
+
+      if (widget.queueRunning) {
+        widget.processQueue();
+      }
+
+      return false;
+    }
+
+    // Form Data
+    var fd = new FormData();
+    fd.append(widget.settings.fieldName, file.file);
+
+    // If the callback returns false file will not be processed. This may allow some customization
+    var can_continue = widget.settings.onBeforeUpload.call(widget.element, file.id);
+    if (can_continue ===  false) {
+      return false;
+    }
+
+    // Append extra Form Data
+    var customData = widget.settings.extraData;
+    if (typeof(widget.settings.extraData) === "function"){
+      customData = widget.settings.extraData.call(widget.element, file.id);
+    }
+
+    $.each(customData, function(exKey, exVal){
+      fd.append(exKey, exVal);
+    });
+
+    file.status = FileStatus.UPLOADING;
+
+    // Ajax Submit
+    file.jqXHR = $.ajax({
+      url: widget.settings.url,
+      type: widget.settings.method,
+      dataType: widget.settings.dataType,
+      data: fd,
+      headers: widget.settings.headers,
+      cache: false,
+      contentType: false,
+      processData: false,
+      forceSync: false,
+      xhr: function(){
+        var xhrobj = $.ajaxSettings.xhr();
+        if(xhrobj.upload){
+          xhrobj.upload.addEventListener('progress', function(event) {
+            var percent = 0;
+            var position = event.loaded || event.position;
+            var total = event.total || event.totalSize;
+            if(event.lengthComputable){
+              percent = Math.ceil(position / total * 100);
+            }
+
+            widget.settings.onUploadProgress.call(widget.element, file.id, percent);
+          }, false);
+        }
+
+        return xhrobj;
+      },
+      success: function (data){
+        file.status = FileStatus.COMPLETED;
+        widget.settings.onUploadSuccess.call(widget.element, file.id, data);
+      },
+      error: function (xhr, status, errMsg){
+        // If the status is: cancelled (by the user) don't invoke the error callback
+        if (file.status != FileStatus.CANCELLED){
+          file.status = FileStatus.FAILED;
+          widget.settings.onUploadError.call(widget.element, file.id, errMsg);
+        }
+      },
+      complete: function(){
+        if (widget.queueRunning){
+          widget.processQueue();
+        }
+      }
+    });
+
     return true;
   };
 
   DmUploaderFile.prototype.cancel = function()
   {
+    switch (this.status){
+      case FileStatus.PENDING:
+        this.status = FileStatus.CANCELLED;
+        break;
+      case FileStatus.UPLOADING:
+        this.status = FileStatus.CANCELLED;
+        this.jqXHR.abort();
+        break;
+      default:
+        return false;
+    }
+
     return true;
   };
+
+  DmUploaderFile.prototype.canUpload = function()
+  {
+    return (this.status == FileStatus.PENDING ||
+      this.status == FileStatus.CANCELLED ||
+      this.status == FileStatus.FAILED);
+  }
 
   var DmUploader = function(element, options)
   {
@@ -97,7 +195,9 @@
 
     // -- Drag and drop events
     widget.element.on('drop', function (evt){
+      evt.stopPropagation();
       evt.preventDefault();
+
       var files = evt.originalEvent.dataTransfer.files;
 
       widget.addFiles(files);
@@ -167,6 +267,7 @@
         return;
       }
 
+      // If we are using automatic uploading, and not a file queue: go for the upload
       if(this.settings.auto && !this.settings.queue){
         fileObj.upload(this);
       }
@@ -182,7 +283,7 @@
     }
 
     // Are we auto-uploading files?
-    if (this.settings.auto && this.settings.queue) {
+    if (this.settings.auto && this.settings.queue && !this.queueRunning) {
       this.processQueue();
     }
 
@@ -191,13 +292,9 @@
 
   DmUploader.prototype.processQueue = function()
   {
-    if (this.queueRunning) {
-      return;
-    }
-
     this.queuePos++;
 
-    if(this.queuePos >= this.queue.length){
+    if (this.queuePos >= this.queue.length){
       this.settings.onComplete.call(this.element);
 
       // Wait until new files are droped
@@ -205,18 +302,71 @@
 
       this.queueRunning = false;
 
-      return;
+      return false;
     }
 
-    this.queue[this.queuePos].upload(this, false);
+    this.queueRunning = true;
+
+    // Start next file
+    return this.queue[this.queuePos].upload(this);
+  };
+
+  DmUploader.prototype.restartQueue = function()
+  {
+    this.queuePos = -1;
+    this.queueRunning = false;
+
+    this.processQueue();
+  };
+
+  DmUploader.prototype.findById = function(id)
+  {
+    var r = false;
+
+    for (var i = 0; i < this.queue.length; i++){
+      if (this.queue[i].id === id){
+        r = this.queue[i];
+        break;
+      }
+    }
+
+    return r;
   };
 
   // Public API methods
   DmUploader.prototype.methods = {
     start: function(id) {
-      // todo: check auto/queue options
+      if (this.queueRunning){
+        // Do not allow to manually upload Files when a queue is running
+        return false;
+      }
 
-      // todo: check id is present
+      var file = false;
+
+      if (typeof id !== 'undefined') {
+        file = this.findById(id);
+
+        if (!file){
+          // File not found in stack
+          return false;
+        }
+      }
+      
+      // Trying to Start an upload by ID
+      if (file) {
+        return file.upload(this);
+      }
+
+      // No id provided...
+      if (this.settings.queue) {
+        // Resume queue
+        this.restartQueue();
+      } else {
+        // or upload them all
+        for (var i = 0; i < this.queue.length; i++){
+          this.queue[i].upload(this);
+        }
+      }
 
       return true;
     },
@@ -226,12 +376,6 @@
       // todo: check id is present
 
       return true;
-    },
-    retry: function(id) {
-      // todo: check auto/queue options
-
-      // todo: check id is present
-
     },
     reset: function() {
       return true;
