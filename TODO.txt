@@ -25,9 +25,11 @@ Major changes before 0.2.0
 Main changes
  - validators now are  !== null
  - extraData accepts now accepts a callback
- - ondragover ondragleave ondrop
+ - dragenter ondragleave ondrop
+ - fllback no mseesage
+ - 
 
-
+- checquear si el tag es un input file, sino es un div etc
 
 ------------------------------------------------------------------------
 
@@ -37,8 +39,6 @@ Documentation:
          * cancel
          * start
          * reset
-         * supportsProgress
-         * supportsDND
 
 ------------------------------------------------------------------------
 

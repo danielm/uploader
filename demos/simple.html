@@ -58,9 +58,13 @@
     <script type="text/javascript">
       
       //-- Some functions to work with our UI
-      function add_log(message)
+      function add_log(message, color)
       {
-        var template = '<li>[' + new Date().getTime() + '] - ' + message + '</li>';
+        var d = new Date();
+
+        color = (typeof color === 'undefined' ? 'default' : color);
+
+        var template = '<li class="'+ color + '">[' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + '] ' + message + '</li>';
         
         $('#debug').find('ul').prepend(template);
       }
@@ -89,14 +93,12 @@
       {
         $('#uploadFile' + id).find('div.progress').width(percent);
       }
-      
       // Upload Plugin itself
       $('#drag-and-drop-zone').dmUploader({
-        url: '/demos/upload.phpa',
+        url: '/demos/upload.php',
         dataType: 'json',
-        auto: false,
-        onDragOver: function(){
-          console.log('draggin over');
+        onDragEnter: function(){
+          console.log('draggin enter');
         },
         onDragLeave: function(){
           console.log('draggin leave');
@@ -108,7 +110,7 @@
           return {name: "daniel"}
         },
         onInit: function(){
-          add_log('Penguin initialized :)');
+          add_log('Penguin initialized :)', 'info');
         },
         onBeforeUpload: function(id){
           add_log('Starting the upload of #' + id);
@@ -129,31 +131,31 @@
           update_file_progress(id, percentStr);
         },
         onUploadSuccess: function(id, data){
-          add_log('Upload of file #' + id + ' completed');
-          
           add_log('Server Response for file #' + id + ': ' + JSON.stringify(data));
           
+          add_log('Upload of file #' + id + ' completed', 'success');
+
           update_file_status(id, 'success', 'Upload Complete');
           
           update_file_progress(id, '100%');
         },
         onUploadError: function(id, message){
-          add_log('Failed to Upload file #' + id + ': ' + message);
+          add_log('Failed to Upload file #' + id + ': ' + message, 'error');
           
           update_file_status(id, 'error', message);
         },
         onFileTypeError: function(file){
-          add_log('File \'' + file.name + '\' cannot be added: must be an image');
+          add_log('File \'' + file.name + '\' cannot be added: must be an image', 'error');
           
         },
         onFileSizeError: function(file){
-          add_log('File \'' + file.name + '\' cannot be added: size excess limit');
+          add_log('File \'' + file.name + '\' cannot be added: size excess limit', 'error');
         },
-        /*onFileExtError: function(file){
+        onFileExtError: function(file){
           $.danidemo.addLog('#demo-debug', 'error', 'File \'' + file.name + '\' has a Not Allowed Extension');
-        },*/
-        onFallbackMode: function(message){
-          alert('Browser not supported(do something else here!): ' + message);
+        },
+        onFallbackMode: function(){
+          add_log('Plugin cant be used here, running Fallback callback', 'error');
         }
       });
     </script>

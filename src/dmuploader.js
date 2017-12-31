@@ -21,6 +21,7 @@
   var defaults = {
     auto: true,
     queue: true,
+    dnd: true,
     url: document.URL,
     method: 'POST',
     extraData: {},
@@ -31,7 +32,7 @@
     allowedTypes: '*',
     extFilter: null,
     onInit: function(){},
-    onFallbackMode: function(message) {},
+    onFallbackMode: function() {},
     onNewFile: function(id, file){},
     onBeforeUpload: function(id){},
     onComplete: function(){},
@@ -41,14 +42,16 @@
     onFileTypeError: function(file){},
     onFileSizeError: function(file){},
     onFileExtError: function(file){},
-    onDragOver: function(){},
     onDragLeave: function(){},
+    onDragEnter: function(){},
     onDrop: function(){}
   };
   
-  var DmUploaderFile = function(file)
+  var DmUploaderFile = function(file, widget)
   {
-    this.file = file;
+    this.data = file;
+
+    this.widget = widget;
 
     this.jqXHR = null;
 
@@ -58,14 +61,14 @@
     this.id = Date.now().toString(36).substr(0, 8);
   };
 
-  DmUploaderFile.prototype.upload = function(widget)
+  DmUploaderFile.prototype.upload = function()
   {
     var file = this;
 
     if (!file.canUpload()){
 
-      if (widget.queueRunning) {
-        widget.processQueue();
+      if (file.widget.queueRunning) {
+        file.widget.processQueue();
       }
 
       return false;
@@ -73,18 +76,18 @@
 
     // Form Data
     var fd = new FormData();
-    fd.append(widget.settings.fieldName, file.file);
+    fd.append(file.widget.settings.fieldName, file.data);
 
     // If the callback returns false file will not be processed. This may allow some customization
-    var can_continue = widget.settings.onBeforeUpload.call(widget.element, file.id);
+    var can_continue = file.widget.settings.onBeforeUpload.call(file.widget.element, file.id);
     if (can_continue ===  false) {
       return false;
     }
 
     // Append extra Form Data
-    var customData = widget.settings.extraData;
-    if (typeof(widget.settings.extraData) === "function"){
-      customData = widget.settings.extraData.call(widget.element, file.id);
+    var customData = file.widget.settings.extraData;
+    if (typeof(file.widget.settings.extraData) === "function"){
+      customData = file.widget.settings.extraData.call(file.widget.element, file.id);
     }
 
     $.each(customData, function(exKey, exVal){
@@ -95,51 +98,65 @@
 
     // Ajax Submit
     file.jqXHR = $.ajax({
-      url: widget.settings.url,
-      type: widget.settings.method,
-      dataType: widget.settings.dataType,
+      url: file.widget.settings.url,
+      type: file.widget.settings.method,
+      dataType: file.widget.settings.dataType,
       data: fd,
-      headers: widget.settings.headers,
+      headers: file.widget.settings.headers,
       cache: false,
       contentType: false,
       processData: false,
       forceSync: false,
-      xhr: function(){
-        var xhrobj = $.ajaxSettings.xhr();
-        if(xhrobj.upload){
-          xhrobj.upload.addEventListener('progress', function(event) {
-            var percent = 0;
-            var position = event.loaded || event.position;
-            var total = event.total || event.totalSize;
-            if(event.lengthComputable){
-              percent = Math.ceil(position / total * 100);
-            }
-
-            widget.settings.onUploadProgress.call(widget.element, file.id, percent);
-          }, false);
-        }
-
-        return xhrobj;
-      },
-      success: function (data){
-        file.status = FileStatus.COMPLETED;
-        widget.settings.onUploadSuccess.call(widget.element, file.id, data);
-      },
-      error: function (xhr, status, errMsg){
-        // If the status is: cancelled (by the user) don't invoke the error callback
-        if (file.status != FileStatus.CANCELLED){
-          file.status = FileStatus.FAILED;
-          widget.settings.onUploadError.call(widget.element, file.id, errMsg);
-        }
-      },
-      complete: function(){
-        if (widget.queueRunning){
-          widget.processQueue();
-        }
-      }
+      xhr: function() { return file.getXhr(); },
+      success: function(data) { file.onSuccess(data); },
+      error: function(xhr, status, errMsg) { file.onError(xhr, status, errMsg); },
+      complete: function(data) { file.onComplete(); },
     });
 
     return true;
+  };
+
+  DmUploaderFile.prototype.onSuccess = function(data)
+  {
+    this.status = FileStatus.COMPLETED;
+    this.widget.settings.onUploadSuccess.call(this.widget.element, this.id, data);
+  };
+
+  DmUploaderFile.prototype.onError = function(xhr, status, errMsg)
+  {
+    // If the status is: cancelled (by the user) don't invoke the error callback
+    if (this.status != FileStatus.CANCELLED){
+      this.status = FileStatus.FAILED;
+      this.widget.settings.onUploadError.call(this.widget.element, this.id, errMsg);
+    }
+  };
+
+  DmUploaderFile.prototype.onComplete = function()
+  {
+    if (this.widget.queueRunning){
+      this.widget.processQueue();
+    }
+  };
+
+  DmUploaderFile.prototype.getXhr = function()
+  {
+    var file = this;
+    var xhrobj = $.ajaxSettings.xhr();
+
+    if(xhrobj.upload){
+      xhrobj.upload.addEventListener('progress', function(event) {
+        var percent = 0;
+        var position = event.loaded || event.position;
+        var total = event.total || event.totalSize;
+        if(event.lengthComputable){
+          percent = Math.ceil(position / total * 100);
+        }
+
+        file.widget.settings.onUploadProgress.call(file.widget.element, file.id, percent);
+      }, false);
+    }
+
+    return xhrobj;
   };
 
   DmUploaderFile.prototype.cancel = function()
@@ -164,27 +181,57 @@
     return (this.status == FileStatus.PENDING ||
       this.status == FileStatus.CANCELLED ||
       this.status == FileStatus.FAILED);
-  }
+  };
 
   var DmUploader = function(element, options)
   {
     this.element = $(element);
     this.settings = $.extend({}, defaults, options);
 
-    this.queue = [];
-    this.queuePos = -1;
-    this.queueRunning = false;
+    if (!this.checkSupport()) {
+       this.settings.onFallbackMode.call(this.element);
+
+       return false;
+    }
 
     this.init();
 
     return this;
   };
 
+  DmUploader.prototype.checkSupport = function()
+  {
+    // This one is mandatory for all modes
+    if(typeof window.FormData === 'undefined'){
+      return false;
+    }
+
+    // Test based on: Modernizr/feature-detects/forms/fileinput.js
+    var exp = new RegExp(
+      '/(Android (1.0|1.1|1.5|1.6|2.0|2.1))|'+
+      '(Windows Phone (OS 7|8.0))|(XBLWP)|'+
+      '(ZuneWP)|(w(eb)?OSBrowser)|(webOS)|'+
+      '(Kindle\/(1.0|2.0|2.5|3.0))/');
+
+    if (exp.test(window.navigator.userAgent)){
+      return false;
+    }
+
+    return !$('<input type="file">').prop('disabled');
+  };
+
   DmUploader.prototype.init = function()
   {
     var widget = this;
 
+    // Queue vars
+    this.queue = [];
+    this.queuePos = -1;
+    this.queueRunning = false;
+
     //-- Optional File input to make a clickable area
+    // FIXME: WHAT IF THIS.ELEMNT ES EL INPUT???
+
     widget.element.find('input[type=file]').on('change', function(evt){
       var files = evt.target.files;
 
@@ -193,31 +240,79 @@
       $(this).val('');
     });
 
-    // -- Drag and drop events
-    widget.element.on('drop', function (evt){
-      evt.stopPropagation();
-      evt.preventDefault();
+    if (this.settings.dnd) {
+      // Disable some document events to prevent redirection
+      $(document).off('dragover.' + pluginName).on('dragover.' + pluginName, function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+      $(document).off('drop.' + pluginName).on('drop.' + pluginName, function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      });
 
-      var files = evt.originalEvent.dataTransfer.files;
+      // -- Now our own Drop
+      widget.element.on('drop', function (evt){
+        evt.stopPropagation();
+        evt.preventDefault();
 
-      widget.addFiles(files);
+        var files = evt.originalEvent.dataTransfer.files;
 
-      widget.settings.onDrop.call(this.element);
-    });
+        widget.addFiles(files);
 
-    //-- These two events/callbacks are onlt to maybe do some fancy visual stuff
-    widget.element.on('dragover', function(evt){
-      widget.settings.onDragOver.call(this.element);
-    });
+        widget.settings.onDrop.call(this.element);
+      });
 
-    widget.element.on('dragleave', function(evt){
-      widget.settings.onDragLeave.call(this.element);
-    });
+      //-- These two events/callbacks are onlt to maybe do some fancy visual stuff
+      widget.element.on('dragleave', function(evt){
+        widget.settings.onDragLeave.call(this.element);
+      });
+
+      widget.element.on('dragenter', function(evt){
+        widget.settings.onDragEnter.call(this.element);
+      });
+    }
 
     // We good to go, tell them!
     this.settings.onInit.call(this.element);
 
     return this;
+  };
+
+  DmUploader.prototype.validateFile = function(file)
+  {
+    // Check file size
+    if((this.settings.maxFileSize > 0) &&
+        (file.size > this.settings.maxFileSize)){
+
+      this.settings.onFileSizeError.call(this.element, file);
+
+      return false;
+    }
+
+    // Check file type
+    if((this.settings.allowedTypes != '*') &&
+        !file.type.match(this.settings.allowedTypes)){
+
+      this.settings.onFileTypeError.call(this.element, file);
+
+      return false;
+    }
+
+    // Check file extension
+    if(this.settings.extFilter !== null){
+      var extList = this.settings.extFilter.toLowerCase().split(';');
+
+      var ext = file.name.toLowerCase().split('.').pop();
+
+      if($.inArray(ext, extList) < 0){
+        this.settings.onFileExtError.call(this.element, file);
+
+        return false;
+      }
+    }
+
+    return new DmUploaderFile(file, this);
   };
 
   DmUploader.prototype.addFiles = function(files)
@@ -226,41 +321,13 @@
 
     for (var i= 0; i < files.length; i++)
     {
-      var file = files[i];
+      var file = this.validateFile(files[i]);
 
-      // Check file size
-      if((this.settings.maxFileSize > 0) &&
-          (file.size > this.settings.maxFileSize)){
-
-        this.settings.onFileSizeError.call(this.element, file);
-
+      if (!file){
         continue;
       }
 
-      // Check file type
-      if((this.settings.allowedTypes != '*') &&
-          !file.type.match(this.settings.allowedTypes)){
-
-        this.settings.onFileTypeError.call(this.element, file);
-
-        continue;
-      }
-
-      // Check file extension
-      if(this.settings.extFilter !== null){
-        var extList = this.settings.extFilter.toLowerCase().split(';');
-
-        var ext = file.name.toLowerCase().split('.').pop();
-
-        if($.inArray(ext, extList) < 0){
-          this.settings.onFileExtError.call(this.element, file);
-
-          continue;
-        }
-      }
-
-      var fileObj = new DmUploaderFile(file);
-      var can_continue = this.settings.onNewFile.call(this.element, fileObj.id, file);
+      var can_continue = this.settings.onNewFile.call(this.element, file.id, file.data);
 
       // If the callback returns false file will not be processed. This may allow some customization
       if (can_continue === false) {
@@ -269,16 +336,16 @@
 
       // If we are using automatic uploading, and not a file queue: go for the upload
       if(this.settings.auto && !this.settings.queue){
-        fileObj.upload(this);
+        file.upload();
       }
 
-      this.queue.push(fileObj);
+      this.queue.push(file);
       
       nFiles++;
     }
 
     // No files were added
-    if (nFiles == 0){
+    if (nFiles === 0){
       return this;
     }
 
@@ -308,7 +375,7 @@
     this.queueRunning = true;
 
     // Start next file
-    return this.queue[this.queuePos].upload(this);
+    return this.queue[this.queuePos].upload();
   };
 
   DmUploader.prototype.restartQueue = function()
@@ -354,7 +421,7 @@
       
       // Trying to Start an upload by ID
       if (file) {
-        return file.upload(this);
+        return file.upload();
       }
 
       // No id provided...
@@ -364,7 +431,7 @@
       } else {
         // or upload them all
         for (var i = 0; i < this.queue.length; i++){
-          this.queue[i].upload(this);
+          this.queue[i].upload();
         }
       }
 
@@ -411,18 +478,4 @@
       });
     }
   };
-
-  // -- Disable Document D&D events to prevent opening the file on browser when we drop them
-  $(document).on('dragenter', function (e) {
-    e.stopPropagation();
-    e.preventDefault();
-  });
-  $(document).on('dragover', function (e) {
-    e.stopPropagation();
-    e.preventDefault();
-  });
-  $(document).on('drop', function (e) {
-    e.stopPropagation();
-    e.preventDefault();
-  });
 })(jQuery);

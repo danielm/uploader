@@ -193,6 +193,23 @@ h1 a {
   margin: 0px 0px 7px 0px;
 }
 
+#debug li.default {
+  color: gray;
+}
+
+#debug li.error {
+  color: #990000;
+}
+
+#debug li.success {
+  color: #009900;
+}
+
+#debug li.info {
+  color: #000099;
+}
+
+
 #footer {
   clear:both;
   width: 100%;
