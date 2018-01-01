@@ -189,9 +189,11 @@
     this.settings = $.extend({}, defaults, options);
 
     if (!this.checkSupport()) {
-       this.settings.onFallbackMode.call(this.element);
+      $.error('Browser not supported by jQuery.dmUploader');
 
-       return false;
+      this.settings.onFallbackMode.call(this.element);
+
+      return false;
     }
 
     this.init();
@@ -229,54 +231,72 @@
     this.queuePos = -1;
     this.queueRunning = false;
 
-    //-- Optional File input to make a clickable area
-    // FIXME: WHAT IF THIS.ELEMNT ES EL INPUT???
+    var input = widget.element.is("input[type=file]") ?
+      widget.element : widget.element.find('input[type=file]');
 
-    widget.element.find('input[type=file]').on('change', function(evt){
-      var files = evt.target.files;
-
-      widget.addFiles(files);
-
-      $(this).val('');
-    });
-
-    if (this.settings.dnd) {
-      // Disable some document events to prevent redirection
-      $(document).off('dragover.' + pluginName).on('dragover.' + pluginName, function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-      });
-      $(document).off('drop.' + pluginName).on('drop.' + pluginName, function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-      });
-
-      // -- Now our own Drop
-      widget.element.on('drop', function (evt){
-        evt.stopPropagation();
-        evt.preventDefault();
-
-        var files = evt.originalEvent.dataTransfer.files;
+    //-- Is the input our main element itself??
+    if (input.length > 0){
+      // Or does it has the input as a child
+      input.on('change.' + pluginName, function(evt){
+        var files = evt.target.files;
 
         widget.addFiles(files);
 
-        widget.settings.onDrop.call(this.element);
+        $(this).val('');
       });
+    }
 
-      //-- These two events/callbacks are onlt to maybe do some fancy visual stuff
-      widget.element.on('dragleave', function(evt){
-        widget.settings.onDragLeave.call(this.element);
-      });
+    if (this.settings.dnd) {
+      this.initDnD();
+    }
 
-      widget.element.on('dragenter', function(evt){
-        widget.settings.onDragEnter.call(this.element);
-      });
+    if (input.length == 0 && !this.settings.dnd){
+      // Trigger an error because if this happens the plugin wont do anything.
+      $.error('Markup error found by jQuery.dmUploader');
+
+      return null;
     }
 
     // We good to go, tell them!
     this.settings.onInit.call(this.element);
 
     return this;
+  };
+
+  DmUploader.prototype.initDnD = function()
+  {
+    var widget = this;
+
+    // -- Now our own Drop
+    widget.element.on('drop.' + pluginName, function (evt){
+      evt.stopPropagation();
+      evt.preventDefault();
+
+      var files = evt.originalEvent.dataTransfer.files;
+
+      widget.addFiles(files);
+
+      widget.settings.onDrop.call(this.element);
+    });
+
+    //-- These two events/callbacks are onlt to maybe do some fancy visual stuff
+    widget.element.on('dragleave.' + pluginName, function(evt){
+      widget.settings.onDragLeave.call(this.element);
+    });
+
+    widget.element.on('dragenter.' + pluginName, function(evt){
+      widget.settings.onDragEnter.call(this.element);
+    });
+
+    // Disable some document events to prevent redirection
+    $(document).off('dragover.' + pluginName).on('dragover.' + pluginName, function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    });
+    $(document).off('drop.' + pluginName).on('drop.' + pluginName, function (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    });
   };
 
   DmUploader.prototype.validateFile = function(file)
