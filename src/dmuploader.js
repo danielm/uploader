@@ -238,7 +238,11 @@
     if (input.length > 0){
       // Or does it has the input as a child
       input.on('change.' + pluginName, function(evt){
-        var files = evt.target.files;
+        var files = evt.target && evt.target.files;
+
+        if (!files || !files.length){
+          return;
+        }
 
         widget.addFiles(files);
 
@@ -277,9 +281,12 @@
         widget.settings.onDragLeave.call(widget.element);
       }
 
-      var files = evt.originalEvent.dataTransfer.files;
+      var dataTransfer = evt.originalEvent && evt.originalEvent.dataTransfer;
+      if (!dataTransfer || !dataTransfer.files || !dataTransfer.files.length) {
+        return;
+      }
 
-      widget.addFiles(files);
+      widget.addFiles(dataTransfer.files);
     });
 
     //-- These two events/callbacks are onlt to maybe do some fancy visual stuff
