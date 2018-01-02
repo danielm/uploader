@@ -32,13 +32,13 @@
     allowedTypes: '*',
     extFilter: null,
     onInit: function(){},
+    onComplete: function(){},
     onFallbackMode: function() {},
     onNewFile: function(id, file){},
-    onBeforeUpload: function(id){},
-    onComplete: function(){},
-    onUploadProgress: function(id, percent){},
-    onUploadSuccess: function(id, data){},
-    onUploadError: function(id, message){},
+    onBeforeUpload: function(id, file){},
+    onUploadProgress: function(id, file, percent){},
+    onUploadSuccess: function(id, file, data){},
+    onUploadError: function(id, file, message){},
     onFileTypeError: function(file){},
     onFileSizeError: function(file){},
     onFileExtError: function(file){},
@@ -79,7 +79,7 @@
     fd.append(file.widget.settings.fieldName, file.data);
 
     // If the callback returns false file will not be processed. This may allow some customization
-    var can_continue = file.widget.settings.onBeforeUpload.call(file.widget.element, file.id);
+    var can_continue = file.widget.settings.onBeforeUpload.call(file.widget.element, file.id, file.data);
     if (can_continue ===  false) {
       return false;
     }
@@ -119,7 +119,7 @@
   DmUploaderFile.prototype.onSuccess = function(data)
   {
     this.status = FileStatus.COMPLETED;
-    this.widget.settings.onUploadSuccess.call(this.widget.element, this.id, data);
+    this.widget.settings.onUploadSuccess.call(this.widget.element, this.id, this.data, data);
   };
 
   DmUploaderFile.prototype.onError = function(xhr, status, errMsg)
@@ -127,7 +127,7 @@
     // If the status is: cancelled (by the user) don't invoke the error callback
     if (this.status != FileStatus.CANCELLED){
       this.status = FileStatus.FAILED;
-      this.widget.settings.onUploadError.call(this.widget.element, this.id, errMsg);
+      this.widget.settings.onUploadError.call(this.widget.element, this.id, this.data, errMsg);
     }
   };
 
@@ -152,7 +152,7 @@
           percent = Math.ceil(position / total * 100);
         }
 
-        file.widget.settings.onUploadProgress.call(file.widget.element, file.id, percent);
+        file.widget.settings.onUploadProgress.call(file.widget.element, file.id, file.data, percent);
       }, false);
     }
 
@@ -347,9 +347,8 @@
         continue;
       }
 
-      var can_continue = this.settings.onNewFile.call(this.element, file.id, file.data);
-
       // If the callback returns false file will not be processed. This may allow some customization
+      var can_continue = this.settings.onNewFile.call(this.element, file.id, file.data);
       if (can_continue === false) {
         return;
       }
