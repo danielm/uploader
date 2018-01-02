@@ -43,7 +43,9 @@
     onFileSizeError: function(file){},
     onFileExtError: function(file){},
     onDragEnter: function(){},
-    onDragLeave: function(){}
+    onDragLeave: function(){},
+    onDocumentDragEnter: function(){},
+    onDocumentDragLeave: function(){}
   };
   
   var DmUploaderFile = function(file, widget)
@@ -230,6 +232,7 @@
     this.queuePos = -1;
     this.queueRunning = false;
     this.draggingOver = 0;
+    this.draggingOverDoc = 0;
 
     var input = widget.element.is("input[type=file]") ?
       widget.element : widget.element.find('input[type=file]');
@@ -273,7 +276,6 @@
 
     // -- Now our own Drop
     widget.element.on('drop.' + pluginName, function (evt){
-      evt.stopPropagation();
       evt.preventDefault();
 
       if (widget.draggingOver > 0){
@@ -310,13 +312,37 @@
       }
     });
 
-    // Disable some document events to prevent redirection
-    $(document).off('dragover.' + pluginName).on('dragover.' + pluginName, function (e) {
-      e.stopPropagation();
-      e.preventDefault();
-    });
+    // Adding some off/namepacing to prevent some weird cases when people use multiple instances
     $(document).off('drop.' + pluginName).on('drop.' + pluginName, function (e) {
-      e.stopPropagation();
+      e.preventDefault();
+
+      if (widget.draggingOverDoc > 0){
+        widget.draggingOverDoc = 0;
+        widget.settings.onDocumentDragLeave.call(widget.element);
+      }
+    });
+
+    $(document).off('dragenter.' + pluginName).on('dragenter.' + pluginName, function (e) {
+      e.preventDefault();
+
+      if (widget.draggingOverDoc === 0){
+        widget.settings.onDocumentDragEnter.call(widget.element);
+      }
+
+      widget.draggingOverDoc++;
+    });
+
+    $(document).off('dragleave.' + pluginName).on('dragleave.' + pluginName, function (e) {
+      e.preventDefault();
+
+      widget.draggingOverDoc--;
+
+      if (widget.draggingOverDoc === 0){
+        widget.settings.onDocumentDragLeave.call(widget.element);
+      }
+    });
+
+    $(document).off('dragover.' + pluginName).on('dragover.' + pluginName, function (e) {
       e.preventDefault();
     });
   };
