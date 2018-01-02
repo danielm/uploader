@@ -42,9 +42,8 @@
     onFileTypeError: function(file){},
     onFileSizeError: function(file){},
     onFileExtError: function(file){},
-    onDragLeave: function(){},
     onDragEnter: function(){},
-    onDrop: function(){}
+    onDragLeave: function(){}
   };
   
   var DmUploaderFile = function(file, widget)
@@ -230,6 +229,7 @@
     this.queue = [];
     this.queuePos = -1;
     this.queueRunning = false;
+    this.draggingOver = 0;
 
     var input = widget.element.is("input[type=file]") ?
       widget.element : widget.element.find('input[type=file]');
@@ -272,20 +272,35 @@
       evt.stopPropagation();
       evt.preventDefault();
 
+      if (widget.draggingOver > 0){
+        widget.draggingOver = 0;
+        widget.settings.onDragLeave.call(widget.element);
+      }
+
       var files = evt.originalEvent.dataTransfer.files;
 
       widget.addFiles(files);
-
-      widget.settings.onDrop.call(this.element);
     });
 
     //-- These two events/callbacks are onlt to maybe do some fancy visual stuff
-    widget.element.on('dragleave.' + pluginName, function(evt){
-      widget.settings.onDragLeave.call(this.element);
+    widget.element.on('dragenter.' + pluginName, function(evt){
+      evt.preventDefault();
+
+      if (widget.draggingOver === 0){
+        widget.settings.onDragEnter.call(widget.element);
+      }
+
+      widget.draggingOver++;
     });
 
-    widget.element.on('dragenter.' + pluginName, function(evt){
-      widget.settings.onDragEnter.call(this.element);
+    widget.element.on('dragleave.' + pluginName, function(evt){
+      evt.preventDefault();
+
+      widget.draggingOver--;
+
+      if (widget.draggingOver === 0){
+        widget.settings.onDragLeave.call(widget.element);
+      }
     });
 
     // Disable some document events to prevent redirection
