@@ -38,6 +38,7 @@
     onBeforeUpload: function(id, file){},
     onUploadProgress: function(id, file, percent){},
     onUploadSuccess: function(id, file, data){},
+    onUploadCanceled: function(id, file){},
     onUploadError: function(id, file, message){},
     onFileTypeError: function(file){},
     onFileSizeError: function(file){},
@@ -126,7 +127,7 @@
   DmUploaderFile.prototype.onError = function(xhr, status, errMsg)
   {
     // If the status is: cancelled (by the user) don't invoke the error callback
-    if (this.status != FileStatus.CANCELLED){
+    if (this.status !== FileStatus.CANCELLED){
       this.status = FileStatus.FAILED;
       this.widget.settings.onUploadError.call(this.widget.element, this.id, this.data, errMsg);
     }
@@ -162,17 +163,19 @@
 
   DmUploaderFile.prototype.cancel = function()
   {
-    switch (this.status){
-      case FileStatus.PENDING:
-        this.status = FileStatus.CANCELLED;
-        break;
-      case FileStatus.UPLOADING:
-        this.status = FileStatus.CANCELLED;
-        this.jqXHR.abort();
-        break;
-      default:
-        return false;
+    var myStatus = this.status;
+
+    if (myStatus === FileStatus.PENDING || myStatus === FileStatus.UPLOADING) {
+      this.status = FileStatus.CANCELLED;
+    } else {
+      return false;
     }
+
+    if (myStatus === FileStatus.UPLOADING) {
+      this.jqXHR.abort();
+    }
+
+    this.widget.settings.onUploadCanceled.call(this.widget.element, this.id, this.data);
 
     return true;
   };
@@ -492,6 +495,7 @@
       }
 
       // No id provided...
+
       if (this.settings.queue) {
         // Resume queue
         this.restartQueue();
@@ -505,13 +509,45 @@
       return true;
     },
     cancel: function(id) {
-      // todo: check auto/queue options
+      var file = false;
+      if (typeof id !== 'undefined') {
+        file = this.findById(id);
 
-      // todo: check id is present
+        if (!file){
+          // File not found in stack
+          return false;
+        }
+      }
+
+      if (file) {
+        return file.cancel();
+      }
+
+      // No id provided
+
+      if (this.settings.queue){
+        this.queueRunning = false;
+      }
+
+      // cancel 'em all
+      for (var i = 0; i < this.queue.length; i++){
+        this.queue[i].cancel();
+      }
 
       return true;
     },
     reset: function() {
+      this.queueRunning = false;
+      this.queuePos = -1;
+
+      // Cancell all... just in case :)
+
+      for (var i = 0; i < this.queue.length; i++){
+        this.queue[i].cancel();
+      }
+
+      this.queue = [];
+
       return true;
     }
   };
