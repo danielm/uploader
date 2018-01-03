@@ -69,7 +69,7 @@
 
     if (!file.canUpload()){
 
-      if (file.widget.queueRunning) {
+      if (file.widget.queueRunning && file.status !== FileStatus.UPLOADING) {
         file.widget.processQueue();
       }
 
@@ -88,8 +88,8 @@
 
     // Append extra Form Data
     var customData = file.widget.settings.extraData;
-    if (typeof(file.widget.settings.extraData) === "function"){
-      customData = file.widget.settings.extraData.call(file.widget.element, file.id);
+    if (typeof(customData) === "function"){
+      customData = customData.call(file.widget.element, file.id);
     }
 
     $.each(customData, function(exKey, exVal){
@@ -97,6 +97,7 @@
     });
 
     file.status = FileStatus.UPLOADING;
+    file.widget.activeFiles++;
 
     // Ajax Submit
     file.jqXHR = $.ajax({
@@ -135,8 +136,12 @@
 
   DmUploaderFile.prototype.onComplete = function()
   {
+    this.widget.activeFiles--;
+
     if (this.widget.queueRunning){
       this.widget.processQueue();
+    } else if (this.widget.settings.queue && this.widget.activeFiles === 0) {
+      this.widget.settings.onComplete.call(this.element);
     }
   };
 
@@ -235,6 +240,7 @@
     this.queue = [];
     this.queuePos = -1;
     this.queueRunning = false;
+    this.activeFiles = 0;
     this.draggingOver = 0;
     this.draggingOverDoc = 0;
 
@@ -433,7 +439,9 @@
     this.queuePos++;
 
     if (this.queuePos >= this.queue.length){
-      this.settings.onComplete.call(this.element);
+      if (this.activeFiles === 0) {
+        this.settings.onComplete.call(this.element);
+      }
 
       // Wait until new files are droped
       this.queuePos = (this.queue.length - 1);
@@ -566,6 +574,7 @@
 
       this.queue = [];
       this.queuePos = -1;
+      this.activeFiles = 0;
 
       return true;
     }
