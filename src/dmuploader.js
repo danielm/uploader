@@ -60,7 +60,7 @@
     this.status = FileStatus.PENDING;
 
     // The file id doesnt have to bo that special.... or not?
-    this.id = Date.now().toString(36).substr(0, 8);
+    this.id = Math.random().toString(36).substr(2);
   };
 
   DmUploaderFile.prototype.upload = function()
@@ -527,6 +527,7 @@
 
       if (this.settings.queue){
         this.queueRunning = false;
+        this.queuePos = this.queue.length - 1;
       }
 
       // cancel 'em all
