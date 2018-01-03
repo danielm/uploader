@@ -182,9 +182,10 @@
 
   DmUploaderFile.prototype.canUpload = function()
   {
-    return (this.status == FileStatus.PENDING ||
-      this.status == FileStatus.CANCELLED ||
-      this.status == FileStatus.FAILED);
+    return (
+      this.status == FileStatus.PENDING ||
+      this.status == FileStatus.FAILED
+    );
   };
 
   var DmUploader = function(element, options)
@@ -491,6 +492,9 @@
       
       // Trying to Start an upload by ID
       if (file) {
+        if (file.status === FileStatus.CANCELLED){
+          file.status = FileStatus.PENDING;
+        }
         return file.upload();
       }
 
