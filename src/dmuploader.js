@@ -171,11 +171,11 @@
       return false;
     }
 
+    this.widget.settings.onUploadCanceled.call(this.widget.element, this.id, this.data);
+
     if (myStatus === FileStatus.UPLOADING) {
       this.jqXHR.abort();
     }
-
-    this.widget.settings.onUploadCanceled.call(this.widget.element, this.id, this.data);
 
     return true;
   };
@@ -486,6 +486,8 @@
 
         if (!file){
           // File not found in stack
+          $.error('File not found in jQuery.dmUploader');
+
           return false;
         }
       }
@@ -519,6 +521,8 @@
 
         if (!file){
           // File not found in stack
+          $.error('File not found in jQuery.dmUploader');
+
           return false;
         }
       }
@@ -528,6 +532,8 @@
       }
 
       // No id provided
+
+      var queueWasRunning = this.queueRunning;
 
       if (this.settings.queue){
         this.queueRunning = false;
@@ -539,9 +545,15 @@
         this.queue[i].cancel();
       }
 
+      if (queueWasRunning){
+        this.settings.onComplete.call(this.element);
+      }
+
       return true;
     },
     reset: function() {
+      var queueWasRunning = this.queueRunning;
+
       this.queueRunning = false;
       this.queuePos = -1;
 
@@ -552,6 +564,10 @@
       }
 
       this.queue = [];
+
+      if (queueWasRunning) {
+        this.settings.onComplete.call(this.element);
+      }
 
       return true;
     }
