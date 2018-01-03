@@ -471,6 +471,34 @@
     return r;
   };
 
+  DmUploader.prototype.cancelAll =  function()
+  {
+    var queueWasRunning = this.queueRunning;
+    this.queueRunning = false;
+
+    // cancel 'em all
+    for (var i = 0; i < this.queue.length; i++){
+      this.queue[i].cancel();
+    }
+
+    if (queueWasRunning){
+      this.settings.onComplete.call(this.element);
+    }
+  };
+
+  DmUploader.prototype.startAll = function()
+  {
+    if (this.settings.queue) {
+      // Resume queue
+      this.restartQueue();
+    } else {
+      // or upload them all
+      for (var i = 0; i < this.queue.length; i++){
+        this.queue[i].upload();
+      }
+    }
+  };
+
   // Public API methods
   DmUploader.prototype.methods = {
     start: function(id) {
@@ -500,17 +528,9 @@
         return file.upload();
       }
 
-      // No id provided...
+      // With no id provided...
 
-      if (this.settings.queue) {
-        // Resume queue
-        this.restartQueue();
-      } else {
-        // or upload them all
-        for (var i = 0; i < this.queue.length; i++){
-          this.queue[i].upload();
-        }
-      }
+      this.startAll();
 
       return true;
     },
@@ -531,43 +551,21 @@
         return file.cancel();
       }
 
-      // No id provided
+      // With no id provided...
+      
+      this.cancelAll();
 
-      var queueWasRunning = this.queueRunning;
-
-      if (this.settings.queue){
-        this.queueRunning = false;
-        this.queuePos = this.queue.length - 1;
-      }
-
-      // cancel 'em all
-      for (var i = 0; i < this.queue.length; i++){
-        this.queue[i].cancel();
-      }
-
-      if (queueWasRunning){
-        this.settings.onComplete.call(this.element);
-      }
+      // And set the current queue position to que last (next) elements
+      this.queuePos = this.queue.length - 1;
 
       return true;
     },
     reset: function() {
-      var queueWasRunning = this.queueRunning;
 
-      this.queueRunning = false;
-      this.queuePos = -1;
-
-      // Cancell all... just in case :)
-
-      for (var i = 0; i < this.queue.length; i++){
-        this.queue[i].cancel();
-      }
+      this.cancelAll();
 
       this.queue = [];
-
-      if (queueWasRunning) {
-        this.settings.onComplete.call(this.element);
-      }
+      this.queuePos = -1;
 
       return true;
     }
