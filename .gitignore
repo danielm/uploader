@@ -1,0 +1,8 @@
+bower_components
+node_modules
+.sizecache.json
+.DS_Store
+.vagrant
+Vagrantfile
+*.diff
+scripts

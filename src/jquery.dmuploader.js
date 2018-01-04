@@ -1,9 +1,10 @@
-/*
- * dmuploader.js - Jquery File Uploader - 0.1
+/*!
+ * dmUploader - jQuery Ajax File Uploader Widget - 0.2.1
  * https://github.com/danielm/uploader
- * 
- * Copyright (c) 2013-2017 Daniel Morales
- * Dual licensed under the MIT and GPL licenses.
+ *
+ * Copyright Daniel Morales <daniel85mg@gmail.com>
+ * Released under the MIT license.
+ * https://github.com/danielm/uploader/blob/master/LICENSE.txt
  */
 
 (function($) {
