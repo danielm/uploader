@@ -33,6 +33,7 @@
     "grunt-contrib-uglify": "^3.3.0"
   },
   "keywords": [
+    "jquery-plugin",
     "javascript",
     "jquery",
     "lightweight",

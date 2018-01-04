@@ -7,7 +7,22 @@
  * https://github.com/danielm/uploader/blob/master/LICENSE.txt
  */
 
-(function($) {
+/* global define, define, window, document, FormData */
+
+(function(factory) {
+  "use strict";
+  if (typeof define === "function" && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(["jquery"], factory);
+  } else if (typeof exports !== "undefined") {
+    module.exports = factory(require("jquery"));
+  } else {
+    // Browser globals
+    factory(window.jQuery);
+  }
+}(function($){
+  "use strict";
+
   var pluginName = "dmUploader";
 
   var FileStatus = {
@@ -610,4 +625,4 @@
       });
     }
   };
-})(jQuery);
+}));
