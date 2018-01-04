@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Daniel.uy - Online Code Demos</title>
 
-    <link rel="stylesheet" href="../demos/css/simple-demo.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../demos/css/styles.css" rel="stylesheet" />
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <script type="text/javascript" src="../dist/jquery.dmuploader.min.js"></script>
   </head>
   <body>
     
@@ -26,6 +30,10 @@
           </div>
         </div>
         <!-- /D&D Markup -->
+
+        <p>
+          <a href="#" id="globalStart">Start</a> | <a href="#" id="globalCancel">Cancel</a> | <a href="#" id="globalReset">Reset</a>
+        </p>
       </div>
       
       <div id="fileList">
@@ -48,13 +56,6 @@
       </div>
     </div>
 
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.min.js"
-      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-      crossorigin="anonymous"></script>
-
-    <script type="text/javascript" src="../src/dmuploader.js"></script>
-
     <script type="text/javascript">
       
       //-- Some functions to work with our UI
@@ -72,13 +73,14 @@
       function add_file(id, file)
       {
         var template = '' +
-          '<div class="file" id="uploadFile' + id + '">' +
+          '<div class="file" id="uploaderFile' + id + '" data-file-id="'+id+'">' +
             '<div class="info">' +
-              '#1 - <span class="filename" title="Size: ' + file.size + 'bytes - Mimetype: ' + file.type + '">' + file.name + '</span><br /><small>Status: <span class="status">Waiting</span></small>' +
+              '<span class="filename" title="Size: ' + file.size + 'bytes - Mimetype: ' + file.type + '">' + file.name + '</span><br /><small>Status: <span class="status">Waiting</span></small>' +
             '</div>' +
             '<div class="bar">' +
               '<div class="progress" style="width:0%"></div>' +
             '</div>' +
+            '<div><a href="#" class="start">Start</a> | <a href="#" class="cancel">Cancel</a></div>' +
           '</div>';
           
           $('#fileList').prepend(template);
@@ -86,33 +88,65 @@
       
       function update_file_status(id, status, message)
       {
-        $('#uploadFile' + id).find('span.status').html(message).addClass(status);
+        $('#uploaderFile' + id).find('span.status').html(message).prop('class', 'status ' + status);
       }
       
       function update_file_progress(id, percent)
       {
-        $('#uploadFile' + id).find('div.progress').width(percent);
+        $('#uploaderFile' + id).find('div.progress').width(percent);
       }
+
+      // Action events
+      $('#fileList').on('click', 'a.start', function(evt){
+        evt.preventDefault();
+
+        var id = $(this).closest('div.file').data('file-id');
+        $('#drag-and-drop-zone').dmUploader('start', id);
+      });
+
+      $('#fileList').on('click', 'a.cancel', function(evt){
+        evt.preventDefault();
+
+        var id = $(this).closest('div.file').data('file-id');
+        $('#drag-and-drop-zone').dmUploader('cancel', id);
+      });
+
+      //
+      $('#globalStart').on('click', function(evt){
+        evt.preventDefault();
+
+        $('#drag-and-drop-zone').dmUploader('start');
+      });
+
+      $('#globalCancel').on('click', function(evt){
+        evt.preventDefault();
+
+        $('#drag-and-drop-zone').dmUploader('cancel');
+      });
+
+      $('#globalReset').on('click', function(evt){
+        evt.preventDefault();
+
+        $('#drag-and-drop-zone').dmUploader('reset');
+      });
+
       // Upload Plugin itself
-      $('#drag-and-drop-zone').dmUploader({
+      $('#drag-and-drop-zone').dmUploader({ //
         url: '/demos/upload.php',
         dataType: 'json',
+        dnd: true,
+        auto:true,
+        queue:true,
         onDragEnter: function(){
-          console.log('draggin enter');
+          $('#drag-and-drop-zone').addClass('uploader-active');
         },
         onDragLeave: function(){
-          console.log('draggin leave');
-        },
-        onDrop: function(){
-          console.log('droped!');
-        },
-        extraData: function() {
-          return {name: "daniel"}
+          $('#drag-and-drop-zone').removeClass('uploader-active');
         },
         onInit: function(){
           add_log('Penguin initialized :)', 'info');
         },
-        onBeforeUpload: function(id){
+        onBeforeUpload: function(id, file){
           add_log('Starting the upload of #' + id);
           
           update_file_status(id, 'uploading', 'Uploading...');
@@ -125,33 +159,42 @@
         onComplete: function(){
           add_log('All pending tranfers finished');
         },
-        onUploadProgress: function(id, percent){
+        onUploadProgress: function(id, file, percent){
           var percentStr = percent + '%';
 
           update_file_progress(id, percentStr);
         },
-        onUploadSuccess: function(id, data){
+        onUploadSuccess: function(id, file, data){
           add_log('Server Response for file #' + id + ': ' + JSON.stringify(data));
           
-          add_log('Upload of file #' + id + ' completed', 'success');
+          add_log('Upload of file #' + id + ' COMPLETED', 'success');
 
           update_file_status(id, 'success', 'Upload Complete');
           
           update_file_progress(id, '100%');
         },
-        onUploadError: function(id, message){
+        onUploadCanceled: function(id, file){
+          add_log('Upload of file #' + id + ' CANCELED', 'info');
+
+          update_file_status(id, 'error', 'Canceled by User');
+
+        },
+        onUploadError: function(id, file, message){
           add_log('Failed to Upload file #' + id + ': ' + message, 'error');
           
           update_file_status(id, 'error', message);
         },
         onFileTypeError: function(file){
+
           add_log('File \'' + file.name + '\' cannot be added: must be an image', 'error');
           
         },
         onFileSizeError: function(file){
+
           add_log('File \'' + file.name + '\' cannot be added: size excess limit', 'error');
         },
         onFileExtError: function(file){
+
           $.danidemo.addLog('#demo-debug', 'error', 'File \'' + file.name + '\' has a Not Allowed Extension');
         },
         onFallbackMode: function(){
