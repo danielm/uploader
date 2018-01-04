@@ -8,7 +8,7 @@
  */
 
 (function($) {
-  var pluginName = 'dmUploader';
+  var pluginName = "dmUploader";
 
   var FileStatus = {
     PENDING: 0,
@@ -24,26 +24,26 @@
     queue: true,
     dnd: true,
     url: document.URL,
-    method: 'POST',
+    method: "POST",
     extraData: {},
     headers: {},
     dataType: null,
-    fieldName: 'file',
+    fieldName: "file",
     maxFileSize: null,
-    allowedTypes: '*',
+    allowedTypes: "*",
     extFilter: null,
     onInit: function(){},
     onComplete: function(){},
     onFallbackMode: function() {},
-    onNewFile: function(id, file){},
-    onBeforeUpload: function(id, file){},
-    onUploadProgress: function(id, file, percent){},
-    onUploadSuccess: function(id, file, data){},
-    onUploadCanceled: function(id, file){},
-    onUploadError: function(id, file, message){},
-    onFileTypeError: function(file){},
-    onFileSizeError: function(file){},
-    onFileExtError: function(file){},
+    onNewFile: function(){},        //params: id, file
+    onBeforeUpload: function(){},   //params: id, file
+    onUploadProgress: function(){}, //params: id, file, percent
+    onUploadSuccess: function(){},  //params: id, file, data
+    onUploadCanceled: function(){}, //params: id, file
+    onUploadError: function(){},    //params: id, file, message
+    onFileTypeError: function(){},  //params: file
+    onFileSizeError: function(){},  //params: file
+    onFileExtError: function(){},   //params: file
     onDragEnter: function(){},
     onDragLeave: function(){},
     onDocumentDragEnter: function(){},
@@ -114,7 +114,7 @@
       xhr: function() { return file.getXhr(); },
       success: function(data) { file.onSuccess(data); },
       error: function(xhr, status, errMsg) { file.onError(xhr, status, errMsg); },
-      complete: function(data) { file.onComplete(); },
+      complete: function() { file.onComplete(); },
     });
 
     return true;
@@ -152,7 +152,7 @@
     var xhrobj = $.ajaxSettings.xhr();
 
     if(xhrobj.upload){
-      xhrobj.upload.addEventListener('progress', function(event) {
+      xhrobj.upload.addEventListener("progress", function(event) {
         var percent = 0;
         var position = event.loaded || event.position;
         var total = event.total || event.totalSize;
@@ -200,7 +200,7 @@
     this.settings = $.extend({}, defaults, options);
 
     if (!this.checkSupport()) {
-      $.error('Browser not supported by jQuery.dmUploader');
+      $.error("Browser not supported by jQuery.dmUploader");
 
       this.settings.onFallbackMode.call(this.element);
 
@@ -215,22 +215,22 @@
   DmUploader.prototype.checkSupport = function()
   {
     // This one is mandatory for all modes
-    if(typeof window.FormData === 'undefined'){
+    if(typeof window.FormData === "undefined"){
       return false;
     }
 
     // Test based on: Modernizr/feature-detects/forms/fileinput.js
     var exp = new RegExp(
-      '/(Android (1.0|1.1|1.5|1.6|2.0|2.1))|'+
-      '(Windows Phone (OS 7|8.0))|(XBLWP)|'+
-      '(ZuneWP)|(w(eb)?OSBrowser)|(webOS)|'+
-      '(Kindle\/(1.0|2.0|2.5|3.0))/');
+      "/(Android (1.0|1.1|1.5|1.6|2.0|2.1))|"+
+      "(Windows Phone (OS 7|8.0))|(XBLWP)|"+
+      "(ZuneWP)|(w(eb)?OSBrowser)|(webOS)|"+
+      "(Kindle\/(1.0|2.0|2.5|3.0))/");
 
     if (exp.test(window.navigator.userAgent)){
       return false;
     }
 
-    return !$('<input type="file">').prop('disabled');
+    return !$("<input type=\"file\">").prop("disabled");
   };
 
   DmUploader.prototype.init = function()
@@ -246,12 +246,12 @@
     this.draggingOverDoc = 0;
 
     var input = widget.element.is("input[type=file]") ?
-      widget.element : widget.element.find('input[type=file]');
+      widget.element : widget.element.find("input[type=file]");
 
     //-- Is the input our main element itself??
     if (input.length > 0){
       // Or does it has the input as a child
-      input.on('change.' + pluginName, function(evt){
+      input.on("change." + pluginName, function(evt){
         var files = evt.target && evt.target.files;
 
         if (!files || !files.length){
@@ -260,7 +260,7 @@
 
         widget.addFiles(files);
 
-        $(this).val('');
+        $(this).val("");
       });
     }
 
@@ -268,9 +268,9 @@
       this.initDnD();
     }
 
-    if (input.length == 0 && !this.settings.dnd){
+    if (input.length === 0 && !this.settings.dnd){
       // Trigger an error because if this happens the plugin wont do anything.
-      $.error('Markup error found by jQuery.dmUploader');
+      $.error("Markup error found by jQuery.dmUploader");
 
       return null;
     }
@@ -286,7 +286,7 @@
     var widget = this;
 
     // -- Now our own Drop
-    widget.element.on('drop.' + pluginName, function (evt){
+    widget.element.on("drop." + pluginName, function (evt){
       evt.preventDefault();
 
       if (widget.draggingOver > 0){
@@ -303,7 +303,7 @@
     });
 
     //-- These two events/callbacks are onlt to maybe do some fancy visual stuff
-    widget.element.on('dragenter.' + pluginName, function(evt){
+    widget.element.on("dragenter." + pluginName, function(evt){
       evt.preventDefault();
 
       if (widget.draggingOver === 0){
@@ -313,7 +313,7 @@
       widget.draggingOver++;
     });
 
-    widget.element.on('dragleave.' + pluginName, function(evt){
+    widget.element.on("dragleave." + pluginName, function(evt){
       evt.preventDefault();
 
       widget.draggingOver--;
@@ -324,7 +324,7 @@
     });
 
     // Adding some off/namepacing to prevent some weird cases when people use multiple instances
-    $(document).off('drop.' + pluginName).on('drop.' + pluginName, function (e) {
+    $(document).off("drop." + pluginName).on("drop." + pluginName, function (e) {
       e.preventDefault();
 
       if (widget.draggingOverDoc > 0){
@@ -333,7 +333,7 @@
       }
     });
 
-    $(document).off('dragenter.' + pluginName).on('dragenter.' + pluginName, function (e) {
+    $(document).off("dragenter." + pluginName).on("dragenter." + pluginName, function (e) {
       e.preventDefault();
 
       if (widget.draggingOverDoc === 0){
@@ -343,7 +343,7 @@
       widget.draggingOverDoc++;
     });
 
-    $(document).off('dragleave.' + pluginName).on('dragleave.' + pluginName, function (e) {
+    $(document).off("dragleave." + pluginName).on("dragleave." + pluginName, function (e) {
       e.preventDefault();
 
       widget.draggingOverDoc--;
@@ -353,7 +353,7 @@
       }
     });
 
-    $(document).off('dragover.' + pluginName).on('dragover.' + pluginName, function (e) {
+    $(document).off("dragover." + pluginName).on("dragover." + pluginName, function (e) {
       e.preventDefault();
     });
   };
@@ -370,7 +370,7 @@
     }
 
     // Check file type
-    if((this.settings.allowedTypes != '*') &&
+    if((this.settings.allowedTypes !== "*") &&
         !file.type.match(this.settings.allowedTypes)){
 
       this.settings.onFileTypeError.call(this.element, file);
@@ -380,9 +380,9 @@
 
     // Check file extension
     if(this.settings.extFilter !== null){
-      var extList = this.settings.extFilter.toLowerCase().split(';');
+      var extList = this.settings.extFilter.toLowerCase().split(";");
 
-      var ext = file.name.toLowerCase().split('.').pop();
+      var ext = file.name.toLowerCase().split(".").pop();
 
       if($.inArray(ext, extList) < 0){
         this.settings.onFileExtError.call(this.element, file);
@@ -518,12 +518,12 @@
 
       var file = false;
 
-      if (typeof id !== 'undefined') {
+      if (typeof id !== "undefined") {
         file = this.findById(id);
 
         if (!file){
           // File not found in stack
-          $.error('File not found in jQuery.dmUploader');
+          $.error("File not found in jQuery.dmUploader");
 
           return false;
         }
@@ -545,12 +545,12 @@
     },
     cancel: function(id) {
       var file = false;
-      if (typeof id !== 'undefined') {
+      if (typeof id !== "undefined") {
         file = this.findById(id);
 
         if (!file){
           // File not found in stack
-          $.error('File not found in jQuery.dmUploader');
+          $.error("File not found in jQuery.dmUploader");
 
           return false;
         }
@@ -584,22 +584,22 @@
   $.fn.dmUploader = function(options){
     var args = arguments;
 
-    if (typeof options === 'string'){
+    if (typeof options === "string"){
       this.each(function(){
         var plugin = $.data(this, pluginName);
 
         if (plugin instanceof DmUploader){
-          if (options === 'destroy'){
+          if (options === "destroy"){
             if(plugin.methods.reset()){
               $.removeData(this, pluginName, null);
             }
-          } else if (typeof plugin.methods[options] === 'function'){
+          } else if (typeof plugin.methods[options] === "function"){
             plugin.methods[options].apply(plugin, Array.prototype.slice.call(args, 1));
           } else {
-            $.error('Method ' +  options + ' does not exist on jQuery.dmUploader');
+            $.error("Method " +  options + " does not exist in jQuery.dmUploader");
           }
         } else {
-          $.error('Unknown plugin data found by jQuery.dmUploader');
+          $.error("Unknown plugin data found by jQuery.dmUploader");
         }
       });
     } else {

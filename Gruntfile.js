@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
+    pkg: grunt.file.readJSON("package.json"),
 
     uglify: {
       options: {
@@ -12,8 +12,8 @@ module.exports = function(grunt) {
       },
       build: {
         files: [{
-          src: 'src/jquery.dmuploader.js',
-          dest: 'dist/jquery.dmuploader.min.js'
+          src: "src/jquery.dmuploader.js",
+          dest: "dist/jquery.dmuploader.min.js"
         }]
       }
     },
@@ -30,8 +30,8 @@ module.exports = function(grunt) {
   });
 
   // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks("grunt-contrib-uglify");
+  grunt.loadNpmTasks("grunt-contrib-jshint");
 
   // No default task, because we need to review our build system :)
   //grunt.registerTask('default', ['watch']);
