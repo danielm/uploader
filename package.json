@@ -32,6 +32,10 @@
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-uglify": "^3.3.0"
   },
+  "scripts": {
+    "lint": "node_modules/grunt-cli/bin/grunt jshint",
+    "minify": "node_modules/grunt-cli/bin/grunt uglify"
+  },
   "keywords": [
     "jquery-plugin",
     "javascript",
