@@ -204,8 +204,8 @@
   DmUploaderFile.prototype.canUpload = function()
   {
     return (
-      this.status == FileStatus.PENDING ||
-      this.status == FileStatus.FAILED
+      this.status === FileStatus.PENDING ||
+      this.status === FileStatus.FAILED
     );
   };
 
