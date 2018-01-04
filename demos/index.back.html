@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daniel.uy - Online Code Demos</title>
+
+    <link rel="stylesheet" href="styles.css" rel="stylesheet" />
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../src/jquery.dmuploader.min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+  </head>
+  <body>
+    
+    <div class="wrapper">
+      <h1>Simple Demo</h1>
+      
+      <div class="left-column">
+        <!-- D&D Markup -->
+        <div id="drag-and-drop-zone" class="uploader">
+          <div>Drag &amp; Drop Images Here</div>
+          <div class="or">-or-</div>
+          <div class="browser">
+            <label>
+              <span>Click to open the file Browser</span>
+              <input type="file" name="files[]" multiple="multiple" title='Click to add Files'>
+            </label>
+          </div>
+        </div>
+        <!-- /D&D Markup -->
+
+        <p>
+          <a href="#" id="globalStart">Start</a> | <a href="#" id="globalCancel">Cancel</a> | <a href="#" id="globalReset">Reset</a>
+        </p>
+      </div>
+      
+      <div id="fileList">
+        
+        <!-- Files will be places here -->
+
+      </div>
+      
+      <div id="debug">
+        <h2>Debug</h2>
+        <div>
+          <ul>
+            <!-- Debug lines will be added here -->
+          </ul>
+        </div>
+      </div>
+      
+      <div id="footer">
+        &copy; <a href="https://www.daniel.uy/">Daniel Morales</a>
+      </div>
+    </div>
+
+  </body>
+</html>
