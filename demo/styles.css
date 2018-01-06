@@ -28,7 +28,8 @@ hr {
 }
 
 /* 
-	Uploader: These styles are the ones you may be interested in and maybe copy :)
+	Uploader: 
+	- These styles are the ones you may be interested in and maybe copy :)
 	- It disables user selection to avoid some weird visuals in some browsers
 	- It masks/hides the the file input behind a button
  */
@@ -36,7 +37,6 @@ hr {
 .dm-uploader {
 	border: 0.25rem dashed #A5A5C7;
 	text-align: center;
-
 	cursor: default;
 
 	-webkit-touch-callout: none;
@@ -47,19 +47,9 @@ hr {
 	user-select: none;
 }
 
-/* Class added when dragging a file over */
-.dm-uploader.active {
-	border-color: red;
-}
-
-.dm-uploader.active h3 {
-	color: red !important;
-}
-
 .dm-uploader .btn {
 	position: relative;
 	overflow: hidden;
-	display: block;
 }
 
 .dm-uploader .btn input[type="file"] {
@@ -75,4 +65,11 @@ hr {
 	-moz-transform: translate(-300px,0) scale(4);
 
 	cursor: pointer;
+}
+
+/* Class applied when dragging a file over the area */
+.dm-uploader.active {
+	border-color: red;
+
+	border-style: solid;
 }
