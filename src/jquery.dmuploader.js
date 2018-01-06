@@ -146,7 +146,7 @@
     // If the status is: cancelled (by the user) don't invoke the error callback
     if (this.status !== FileStatus.CANCELLED) {
       this.status = FileStatus.FAILED;
-      this.widget.settings.onUploadError.call(this.widget.element, this.id, this.data, errMsg);
+      this.widget.settings.onUploadError.call(this.widget.element, this.id, this.data, xhr, status, errMsg);
     }
   };
 
@@ -245,7 +245,7 @@
       return false;
     }
 
-    return !$("<input type=\"file\">").prop("disabled");
+    return !$("<input type=\"file\" />").prop("disabled");
   };
 
   DmUploader.prototype.init = function()
