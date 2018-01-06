@@ -1,0 +1,78 @@
+/* 
+	First: A couple styles to make the demo page look good
+ */
+body {
+	padding-bottom: 2rem;
+	padding-top: 4rem;
+}
+
+.row {
+	margin-bottom: 1rem;
+}
+[class*="col-"] {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+hr {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+}
+
+#files {
+    overflow-y: scroll !important;
+}
+
+#debug {
+	overflow-y: scroll !important;
+	height: 180px;	
+}
+
+/* 
+	Uploader: These styles are the ones you may be interested in and maybe copy :)
+	- It disables user selection to avoid some weird visuals in some browsers
+	- It masks/hides the the file input behind a button
+ */
+
+.dm-uploader {
+	border: 0.25rem dashed #A5A5C7;
+	text-align: center;
+
+	cursor: default;
+
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/* Class added when dragging a file over */
+.dm-uploader.active {
+	border-color: red;
+}
+
+.dm-uploader.active h3 {
+	color: red !important;
+}
+
+.dm-uploader .btn {
+	position: relative;
+	overflow: hidden;
+	display: block;
+}
+
+.dm-uploader .btn input[type="file"] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	border: solid transparent;
+	border-width: 0 0 100px 200px;
+	opacity: .0;
+	filter: alpha(opacity= 0);
+	-o-transform: translate(250px,-50px) scale(1);
+	-moz-transform: translate(-300px,0) scale(4);
+
+	cursor: pointer;
+}
