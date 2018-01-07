@@ -13,16 +13,16 @@ And It's just to demonstrate the flow; the script returns a very basic JSON resp
 ### Success response:
 ```json
 {
-	status: 'ok',
-	path: 'files/5a515f174dea7_Hot_Gril.jpg'
+	"status": "ok",
+	"path": "files/5a515f174dea7_Hot_Gril.jpg"
 }
 ```
 
 ### Error response:
 ```json
 {
-	status: 'error',
-	message: 'Exceeded filesize limit'
+	"status": "error",
+	"message": "Exceeded filesize limit"
 }
 ```
 
