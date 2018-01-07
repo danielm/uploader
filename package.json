@@ -2,7 +2,7 @@
   "name": "dm-uploader",
   "title": "jQuery Ajax File Uploader Widget",
   "description": "A very lightweight Plugin for file uploading using ajax(async) and includes support for queues, progress tracking and drag and drop.",
-  "version": "0.2.1",
+  "version": "1.0.1",
   "homepage": "https://github.com/danielm/uploader",
   "author": {
     "name": "Daniel Morales",
@@ -28,13 +28,14 @@
   },
   "devDependencies": {
     "grunt": "^1.0.1",
-    "grunt-cli": "^1.2.0",
     "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-uglify": "^3.3.0"
+    "grunt-contrib-uglify": "^3.3.0",
+    "grunt-contrib-watch": "^1.0.0"
   },
   "scripts": {
-    "lint": "node_modules/grunt-cli/bin/grunt jshint",
-    "minify": "node_modules/grunt-cli/bin/grunt uglify"
+    "test": "grunt jshint",
+    "build": "grunt uglify",
+    "pushtags": "git push --tags origin master"
   },
   "keywords": [
     "jquery-plugin",
