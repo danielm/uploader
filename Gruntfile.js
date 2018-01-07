@@ -7,8 +7,9 @@ module.exports = function(grunt) {
 
     uglify: {
       options: {
-        preserveComments: true
-        //banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy") %> */\n'
+        output: {
+          comments: 'some'
+        }
       },
       build: {
         files: [{
