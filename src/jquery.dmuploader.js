@@ -38,6 +38,7 @@
     auto: true,
     queue: true,
     dnd: true,
+    hookDocument: true,
     multiple: true,
     url: document.URL,
     method: "POST",
@@ -350,39 +351,56 @@
       }
     });
 
-    // Adding some off/namepacing to prevent some weird cases when people use multiple instances
-    $(document).off("drop." + pluginName).on("drop." + pluginName, function(evt) {
-      evt.preventDefault();
+    if (widget.settings.hookDocument) {
+      // Adding some off/namepacing to prevent some weird cases when people use multiple instances
+      $(document).off("drop." + pluginName).on("drop." + pluginName, function(evt) {
+        evt.preventDefault();
 
-      if (widget.draggingOverDoc > 0){
-        widget.draggingOverDoc = 0;
-        widget.settings.onDocumentDragLeave.call(widget.element);
+        if (widget.draggingOverDoc > 0){
+          widget.draggingOverDoc = 0;
+          widget.settings.onDocumentDragLeave.call(widget.element);
+        }
+      });
+
+      $(document).off("dragenter." + pluginName).on("dragenter." + pluginName, function(evt) {
+        evt.preventDefault();
+
+        if (widget.draggingOverDoc === 0){
+          widget.settings.onDocumentDragEnter.call(widget.element);
+        }
+
+        widget.draggingOverDoc++;
+      });
+
+      $(document).off("dragleave." + pluginName).on("dragleave." + pluginName, function(evt) {
+        evt.preventDefault();
+
+        widget.draggingOverDoc--;
+
+        if (widget.draggingOverDoc === 0){
+          widget.settings.onDocumentDragLeave.call(widget.element);
+        }
+      });
+
+      $(document).off("dragover." + pluginName).on("dragover." + pluginName, function(evt) {
+        evt.preventDefault();
+      });
+    }
+  };
+
+  DmUploader.prototype.releaseEvents = function() {
+    // Leave everyone ALONE ;_;
+
+    this.element.off("." + pluginName);
+    this.element.find("input[type=file]").off("." + pluginName);
+
+    if (this.settings.dnd) {
+      this.element.off("." + pluginName);
+
+      if (this.settings.hookDocument) {
+        $(document).off("." + pluginName);
       }
-    });
-
-    $(document).off("dragenter." + pluginName).on("dragenter." + pluginName, function(evt) {
-      evt.preventDefault();
-
-      if (widget.draggingOverDoc === 0){
-        widget.settings.onDocumentDragEnter.call(widget.element);
-      }
-
-      widget.draggingOverDoc++;
-    });
-
-    $(document).off("dragleave." + pluginName).on("dragleave." + pluginName, function(evt) {
-      evt.preventDefault();
-
-      widget.draggingOverDoc--;
-
-      if (widget.draggingOverDoc === 0){
-        widget.settings.onDocumentDragLeave.call(widget.element);
-      }
-    });
-
-    $(document).off("dragover." + pluginName).on("dragover." + pluginName, function(evt) {
-      evt.preventDefault();
-    });
+    }
   };
 
   DmUploader.prototype.validateFile = function(file)
@@ -605,6 +623,13 @@
       this.activeFiles = 0;
 
       return true;
+    },
+    destroy: function() {
+      this.cancelAll();
+
+      this.releaseEvents();
+
+      this.element.removeData(pluginName);
     }
   };
 
@@ -616,11 +641,7 @@
         var plugin = $.data(this, pluginName);
 
         if (plugin instanceof DmUploader) {
-          if (options === "destroy") {
-            if (plugin.methods.reset()) {
-              $.removeData(this, pluginName, null);
-            }
-          } else if (typeof plugin.methods[options] === "function") {
+          if (typeof plugin.methods[options] === "function") {
             plugin.methods[options].apply(plugin, Array.prototype.slice.call(args, 1));
           } else {
             $.error("Method " +  options + " does not exist in jQuery.dmUploader");
