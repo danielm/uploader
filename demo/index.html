@@ -32,7 +32,7 @@
 
             <div class="btn btn-primary btn-block mb-5">
                 <span>Open the file Browser</span>
-                <input type="file" multiple="multiple" title='Click to add Files' />
+                <input type="file" title='Click to add Files' />
             </div>
           </div><!-- /uploader -->
 
@@ -80,6 +80,7 @@
     <script src="../dist/jquery.dmuploader.min.js"></script>
     <script src="main.js"></script>
 
+    <!-- File item template -->
     <script type="text/html" id="files-template">
       <div class="file mb-1">
         %%filename%% - Status: <span class="text-muted">Waiting</span>
@@ -95,6 +96,7 @@
       </div>
     </script>
 
+    <!-- Debug item template -->
     <script type="text/html" id="debug-template">
       <li class="list-group-item text-%%color%%"><strong>%%date%%</strong>: %%message%%</li>
     </script>

@@ -38,6 +38,7 @@
     auto: true,
     queue: true,
     dnd: true,
+    multiple: true,
     url: document.URL,
     method: "POST",
     extraData: {},
@@ -265,6 +266,8 @@
 
     //-- Is the input our main element itself??
     if (input.length > 0) {
+      input.prop("multiple", this.settings.multiple);
+
       // Or does it has the input as a child
       input.on("change." + pluginName, function(evt) {
         var files = evt.target && evt.target.files;
@@ -314,7 +317,16 @@
         return;
       }
 
-      widget.addFiles(dataTransfer.files);
+      // Take only the first file if not acepting multiple, this is kinda ugly. Needs Review ?
+      var files = [];
+
+      if (widget.settings.multiple) {
+        files = dataTransfer.files;
+      } else {
+        files.push(dataTransfer.files[0]);
+      }
+
+      widget.addFiles(files);
     });
 
     //-- These two events/callbacks are onlt to maybe do some fancy visual stuff
