@@ -38,6 +38,7 @@
   },
   "keywords": [
     "jquery-plugin",
+    "ecosystem:jquery",
     "javascript",
     "jquery",
     "lightweight",
@@ -52,6 +53,7 @@
     "drop",
     "progress",
     "form",
-    "queue"
+    "queue",
+    "lightweight"
   ]
 }

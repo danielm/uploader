@@ -1,3 +1,12 @@
+X FECHA EN DEBUG
+X FILESIZE
+X MARGENES
+X MEJORAR PROGRESS BAR
+X IMPLEMENTAR MEJOR BACKEND.PHP
+X ver que estilos de .dm-uploader .btn son necedsarios y cuales no
+X README.MD DENTRO DE DEMO y comentariocabezal en backend.php
+
+
 - Testing!!!!!!!!
 
 Major changes before 0.2.0
@@ -28,6 +37,8 @@ Main changes
  - dragenter ondragleave ondrop
  - fllback no mseesage
  - new dnd option
+
+ onError tiene mas opciones
 
 X cfunction initDnD: function is()
 X checquear si el tag es un input file, sino es un div etc
@@ -60,14 +71,17 @@ X Ser consistente con como se llaman los callbacks, sobretodo con los dragleave 
 X Code style
   X lint
   X minify
-  - OPCION multiple!
-  - carpeta demos
-  - banner
-  - test otros browsers / mobile
+  X carpeta demos
+  X OPCION multiple!
+  X banner JS USING GRUNT
+  X DESTROY: REWVIEW, CREAR METHOD DISTORY... QUE LLAME A RESET, Y BORRE LOS DOCUMENT DRAG LISTENERS IF DND ENABLED
   - demos danielmg.org
+  - test otros browsers / mobile
+
   - plugins.jquery.com / dmuploader.jquery.json
-  - scripts de package.json para publish an npm publish, y push tags a github
+    - scripts de package.json para publish an npm publish, y push tags a github
   - npm.com ?
+  
   - bower.io ?
 
 X test manual queue
