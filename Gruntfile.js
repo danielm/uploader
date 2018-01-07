@@ -8,7 +8,7 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         output: {
-          comments: 'some'
+          comments: "some"
         }
       },
       build: {
