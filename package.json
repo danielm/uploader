@@ -6,14 +6,14 @@
   "homepage": "https://github.com/danielm/uploader",
   "author": {
     "name": "Daniel Morales",
-    "url": "https://daniel.uy"
+    "url": "https://danielmg.org"
   },
   "main": "src/jquery.dmuploader.js",
   "maintainers": [
     {
       "name": "Daniel Morales",
       "email": "daniel85mg@gmail.com",
-      "url": "https://daniel.uy"
+      "url": "https://danielmg.org"
     }
   ],
   "repository": {
@@ -28,13 +28,14 @@
   },
   "devDependencies": {
     "grunt": "^1.0.1",
+    "grunt-contrib-cssmin": "^2.2.1",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-uglify": "^3.3.0",
     "grunt-contrib-watch": "^1.0.0"
   },
   "scripts": {
-    "test": "grunt jshint",
-    "build": "grunt uglify",
+    "test": "grunt test",
+    "build": "grunt build",
     "pushtags": "git push --tags origin master"
   },
   "keywords": [
