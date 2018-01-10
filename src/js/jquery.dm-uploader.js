@@ -60,6 +60,7 @@
     onUploadSuccess: function(){},  //params: id, file, data
     onUploadCanceled: function(){}, //params: id, file
     onUploadError: function(){},    //params: id, file, message
+    onUploadComplete: function(){}, //params: id, file
     onFileTypeError: function(){},  //params: file
     onFileSizeError: function(){},  //params: file
     onFileExtError: function(){},   //params: file
@@ -157,6 +158,8 @@
   DmUploaderFile.prototype.onComplete = function()
   {
     this.widget.activeFiles--;
+
+    this.widget.settings.onUploadComplete.call(this.widget.element, this.id, this.data);
 
     if (this.widget.queueRunning) {
       this.widget.processQueue();
