@@ -32,8 +32,8 @@ $(function(){
     onBeforeUpload: function(id, file){
       // about tho start uploading a file
       ui_add_log('Starting the upload of #' + id);
-      ui_multi_update_file_progress(id, 0, '', true);
       ui_multi_update_file_status(id, 'uploading', 'Uploading...');
+      ui_multi_update_file_progress(id, 0, '', true);
     },
     onUploadProgress: function(id, file, percent){
       // Updating file progress
@@ -47,7 +47,6 @@ $(function(){
       ui_multi_update_file_progress(id, 100, 'success', false);
     },
     onUploadError: function(id, file, xhr, status, message){
-      // Happens when an upload error happens
       ui_multi_update_file_status(id, 'danger', message);
       ui_multi_update_file_progress(id, 0, 'danger', false);  
     },

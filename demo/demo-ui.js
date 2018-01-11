@@ -64,22 +64,3 @@ function ui_multi_update_file_progress(id, percent, color, active)
     bar.addClass('bg-' + color);
   }
 }
-
-// Toggles the disabled status of Star/Cancel buttons on one particual file
-function ui_multi_update_file_controls(id, start, cancel, wasError)
-{
-  wasError = (typeof wasError === 'undefined' ? false : wasError);
-
-  $('#uploaderFile' + id).find('button.start').prop('disabled', !start);
-  $('#uploaderFile' + id).find('button.cancel').prop('disabled', !cancel);
-
-  if (!start && !cancel) {
-    $('#uploaderFile' + id).find('.controls').fadeOut();
-  } else {
-    $('#uploaderFile' + id).find('.controls').fadeIn();
-  }
-
-  if (wasError) {
-    $('#uploaderFile' + id).find('button.start').html('Retry');
-  }
-}

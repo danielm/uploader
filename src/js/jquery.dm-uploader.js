@@ -191,6 +191,10 @@
 
   DmUploaderFile.prototype.cancel = function(abort)
   {
+    // The abort flag is to track if we are calling this function directly (using the cancel Method, by id)
+    // or the call comes from the 'gobal' method aka cancelAll.
+    // THis mean that we don't want to trigger the cancel event on file that isn't uploading, UNLESS directly doing it
+    // ... and yes, it could be done prettier. Review (?)
     abort = (typeof abort === "undefined" ? false : abort);
 
     var myStatus = this.status;

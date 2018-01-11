@@ -84,18 +84,22 @@
 
     <!-- File item template -->
     <script type="text/html" id="files-template">
-      <div class="file mb-1">
-        %%filename%% - Status: <span class="text-muted">Waiting</span>
-        <div class="progress">
-          <div class="progress-bar progress-bar-striped progress-bar-animated" 
-            role="progressbar"
-            style="width: 0%" 
-            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-            0%
+      <li class="media">
+        <div class="media-body mb-1">
+          <p class="mb-2">
+            <strong>%%filename%%</strong> - Status: <span class="text-muted">Waiting</span>
+          </p>
+          <div class="progress mb-2">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
+              role="progressbar"
+              style="width: 0%" 
+              aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              0%
+            </div>
           </div>
+          <hr class="mt-1 mb-1" />
         </div>
-        <hr class="mt-3 mb-1" />
-      </div>
+      </li>
     </script>
 
     <!-- Debug item template -->
