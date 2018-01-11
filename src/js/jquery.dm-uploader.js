@@ -189,11 +189,13 @@
     return xhrobj;
   };
 
-  DmUploaderFile.prototype.cancel = function()
+  DmUploaderFile.prototype.cancel = function(abort)
   {
+    abort = (typeof abort === "undefined" ? false : abort);
+
     var myStatus = this.status;
 
-    if (myStatus === FileStatus.PENDING || myStatus === FileStatus.UPLOADING) {
+    if (myStatus === FileStatus.UPLOADING || (abort && myStatus === FileStatus.PENDING)) {
       this.status = FileStatus.CANCELLED;
     } else {
       return false;
@@ -605,15 +607,12 @@
       }
 
       if (file) {
-        return file.cancel();
+        return file.cancel(true);
       }
 
       // With no id provided...
       
       this.cancelAll();
-
-      // And set the current queue position to que last (next) elements
-      this.queuePos = this.queue.length - 1;
 
       return true;
     },
