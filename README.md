@@ -1,4 +1,4 @@
-# JQuery File Uploader
+# jQuery Ajax File Uploader Widget
 A jQuery plugin for file uploading using ajax(a sync); includes support for queues, progress tracking and drag and drop.
 
 Very ***configurable*** and easy to adapt to any ***Frontend*** design, and very easy to work along side any backend logic.
