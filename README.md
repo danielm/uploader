@@ -40,7 +40,7 @@ Zipped stable release can be downloaded from [Github Release Page](https://githu
 
 ### Git
 ````bash
-https://github.com/danielm/uploader.git
+git clone https://github.com/danielm/uploader.git
 ````
 
 ## Usage
