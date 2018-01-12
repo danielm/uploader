@@ -1,8 +1,12 @@
 # JQuery File Uploader
-A jQuery plugin for file uploading using ajax(async) and includes support for queues, progress tracking and drag and drop.
-- Lightweight: arround 8.00 KB 
-- Dependencies: just jQuery (>=1.7)
-- License: MIT (see LICENCE.txt). 
+A jQuery plugin for file uploading using ajax(a sync); includes support for queues, progress tracking and drag and drop.
+The focus will be for modern browsers, but also providing a method to know when is the plugin is not supported. The idea for this plugin is to keep it simple and lightweight, no need to add hacky code to unnecessary features for the web we have nowadays.
+
+Basic Javascript knowledge is necesary to setup this plugin: how to set parameters, callbacks, etc.
+
+- Lightweight: ~8.00 KB 
+- Dependencies: just jQuery!
+- License: MIT
 
 ## Demos
 As example here are a couple configurations you can use as example:
@@ -13,7 +17,7 @@ https://danielmg.org/demo/java-script/uploader
   * [Installation](#installation)
   * [Usage](#usage)
     * [Markup](#markup)
-    * [Initialization](#init)
+    * [Initialization](#initialization)
   * [Options](#options)
   * [Callacks](#callbacks)
 
@@ -43,6 +47,6 @@ https://danielmg.org/demo/java-script/uploader
 ## Options
 ..
 
-## Callacks
+## Callbacks
 ..
 
