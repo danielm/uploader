@@ -48,7 +48,7 @@
     headers: {},
     dataType: null,
     fieldName: "file",
-    maxFileSize: null,
+    maxFileSize: 0,
     allowedTypes: "*",
     extFilter: null,
     onInit: function(){},
