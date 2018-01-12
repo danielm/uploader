@@ -8,7 +8,7 @@
     "name": "Daniel Morales",
     "url": "https://danielmg.org"
   },
-  "main": "src/jquery.dmuploader.js",
+  "main": "src/js/jquery.dm-uploader.js",
   "maintainers": [
     {
       "name": "Daniel Morales",
