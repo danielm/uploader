@@ -159,7 +159,9 @@
   {
     this.widget.activeFiles--;
 
-    this.widget.settings.onUploadComplete.call(this.widget.element, this.id, this.data);
+    if (this.status !== FileStatus.CANCELLED) {
+      this.widget.settings.onUploadComplete.call(this.widget.element, this.id, this.data);
+    }
 
     if (this.widget.queueRunning) {
       this.widget.processQueue();
