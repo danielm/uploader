@@ -18,8 +18,13 @@ hr {
 }
 #files {
     overflow-y: scroll !important;
+    min-height: 320px;
 }
-
+@media (min-width: 768px) {
+	#files {
+		min-height: 0;
+	}
+}
 #debug {
 	overflow-y: scroll !important;
 	height: 180px;	
