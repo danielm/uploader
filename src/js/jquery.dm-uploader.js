@@ -59,7 +59,7 @@
     onUploadProgress: function(){}, //params: id, file, percent
     onUploadSuccess: function(){},  //params: id, file, data
     onUploadCanceled: function(){}, //params: id, file
-    onUploadError: function(){},    //params: id, file, message
+    onUploadError: function(){},    //params: id, file, xhr, status, message
     onUploadComplete: function(){}, //params: id, file
     onFileTypeError: function(){},  //params: file
     onFileSizeError: function(){},  //params: file
@@ -463,7 +463,7 @@
       // If the callback returns false file will not be processed. This may allow some customization
       var can_continue = this.settings.onNewFile.call(this.element, file.id, file.data);
       if (can_continue === false) {
-        return;
+        continue;
       }
 
       // If we are using automatic uploading, and not a file queue: go for the upload
