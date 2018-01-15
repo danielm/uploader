@@ -10,6 +10,8 @@ Besides upside downs in the last couple years the project is very alive and issu
 
 ## Known issues
 - Can't 'start' files using the method: "start" (uh) when there is a queue currently running. More than an issue this is kinda a mix of features that don't work great together. Most likely this will be fixed during some code rewrite / refactoring / cleanup; doing it right now it may lead to some ugly code / function flags etc.
+- Option hookDocument needs a review.
+- Probably join validation callbacks into one like: onValidationError. This may imply having a hardcoded message and the plugin currently doen't have a i18n system.
 
 ## Contributing 
 - Make sure the pull-requests are from the 'master' branch. AND make sure you have the latest version!
