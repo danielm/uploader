@@ -35,6 +35,11 @@ $(function(){
       ui_multi_update_file_status(id, 'uploading', 'Uploading...');
       ui_multi_update_file_progress(id, 0, '', true);
     },
+    onUploadCanceled: function(id, file) {
+      // Happens when a file is directly canceled by the user.
+      ui_multi_update_file_status(id, 'warning', 'Canceled by User');
+      ui_multi_update_file_progress(id, 0, 'warning', false);
+    },
     onUploadProgress: function(id, file, percent){
       // Updating file progress
       ui_multi_update_file_progress(id, percent);

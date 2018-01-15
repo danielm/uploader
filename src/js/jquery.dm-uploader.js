@@ -101,12 +101,6 @@
     var fd = new FormData();
     fd.append(file.widget.settings.fieldName, file.data);
 
-    // If the callback returns false file will not be processed. This may allow some customization
-    var can_continue = file.widget.settings.onBeforeUpload.call(file.widget.element, file.id, file.data);
-    if (can_continue ===  false) {
-      return false;
-    }
-
     // Append extra Form Data
     var customData = file.widget.settings.extraData;
     if (typeof(customData) === "function") {
@@ -119,6 +113,19 @@
 
     file.status = FileStatus.UPLOADING;
     file.widget.activeFiles++;
+
+    // If the callback returns false file will not be processed. This may allow some customization
+    var can_continue = file.widget.settings.onBeforeUpload.call(file.widget.element, file.id, file.data);
+    if (can_continue ===  false) {
+      // Review: This looks kinda hacky, but at least a single return doesn't stop the whole thing
+      file.widget.settings.onUploadCanceled.call(file.widget.element, file.id, file.data);
+
+      file.status = FileStatus.CANCELLED;
+
+      file.onComplete(true);
+
+      return false;
+    }
 
     // Ajax Submit
     file.jqXHR = $.ajax({
