@@ -1,5 +1,5 @@
 {
-  "name": "dm-uploader",
+  "name": "dm-file-uploader",
   "description": "A very lightweight and configurable jQuery Plugin for file uploading using ajax(async); includes support for queues, progress tracking and drag and drop.",
   "main": "src/jquery.dmuploader.js",
   "authors": [

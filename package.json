@@ -1,8 +1,8 @@
 {
-  "name": "dm-uploader",
+  "name": "dm-file-uploader",
   "title": "jQuery Ajax File Uploader Widget",
   "description": "A very lightweight and configurable jQuery Plugin for file uploading using ajax(async); includes support for queues, progress tracking and drag and drop.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "homepage": "https://github.com/danielm/uploader",
   "author": {
     "name": "Daniel Morales",

@@ -33,12 +33,12 @@ Check the live Demos here: https://danielmg.org/demo/java-script/uploader
 
 ### NPM
 ```bash
-npm install dm-uploader --save
+npm install dm-file-uploader --save
 ```
 
 ### Bower
 ```bash
-bower install dm-uploader --save
+bower install dm-file-uploader --save
 ```
 
 ### Download tarball
