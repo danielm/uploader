@@ -55,12 +55,12 @@
     onComplete: function(){},
     onFallbackMode: function() {},
     onNewFile: function(){},        //params: id, file
-    onBeforeUpload: function(){},   //params: id, file
-    onUploadProgress: function(){}, //params: id, file, percent
-    onUploadSuccess: function(){},  //params: id, file, data
-    onUploadCanceled: function(){}, //params: id, file
-    onUploadError: function(){},    //params: id, file, xhr, status, message
-    onUploadComplete: function(){}, //params: id, file
+    onBeforeUpload: function(){},   //params: id
+    onUploadProgress: function(){}, //params: id, percent
+    onUploadSuccess: function(){},  //params: id, data
+    onUploadCanceled: function(){}, //params: id
+    onUploadError: function(){},    //params: id, xhr, status, message
+    onUploadComplete: function(){}, //params: id
     onFileTypeError: function(){},  //params: file
     onFileSizeError: function(){},  //params: file
     onFileExtError: function(){},   //params: file
@@ -114,18 +114,7 @@
     file.status = FileStatus.UPLOADING;
     file.widget.activeFiles++;
 
-    // If the callback returns false file will not be processed. This may allow some customization
-    var can_continue = file.widget.settings.onBeforeUpload.call(file.widget.element, file.id, file.data);
-    if (can_continue ===  false) {
-      // Review: This looks kinda hacky, but at least a single return doesn't stop the whole thing
-      file.widget.settings.onUploadCanceled.call(file.widget.element, file.id, file.data);
-
-      file.status = FileStatus.CANCELLED;
-
-      file.onComplete(true);
-
-      return false;
-    }
+    file.widget.settings.onBeforeUpload.call(file.widget.element, file.id);
 
     // Ajax Submit
     file.jqXHR = $.ajax({
@@ -150,7 +139,7 @@
   DmUploaderFile.prototype.onSuccess = function(data)
   {
     this.status = FileStatus.COMPLETED;
-    this.widget.settings.onUploadSuccess.call(this.widget.element, this.id, this.data, data);
+    this.widget.settings.onUploadSuccess.call(this.widget.element, this.id, data);
   };
 
   DmUploaderFile.prototype.onError = function(xhr, status, errMsg)
@@ -158,7 +147,7 @@
     // If the status is: cancelled (by the user) don't invoke the error callback
     if (this.status !== FileStatus.CANCELLED) {
       this.status = FileStatus.FAILED;
-      this.widget.settings.onUploadError.call(this.widget.element, this.id, this.data, xhr, status, errMsg);
+      this.widget.settings.onUploadError.call(this.widget.element, this.id, xhr, status, errMsg);
     }
   };
 
@@ -167,7 +156,7 @@
     this.widget.activeFiles--;
 
     if (this.status !== FileStatus.CANCELLED) {
-      this.widget.settings.onUploadComplete.call(this.widget.element, this.id, this.data);
+      this.widget.settings.onUploadComplete.call(this.widget.element, this.id);
     }
 
     if (this.widget.queueRunning) {
@@ -191,7 +180,7 @@
         if (event.lengthComputable) {
           percent = Math.ceil(position / total * 100);
         }
-        file.widget.settings.onUploadProgress.call(file.widget.element, file.id, file.data, percent);
+        file.widget.settings.onUploadProgress.call(file.widget.element, file.id, percent);
       }, false);
     }
 
@@ -214,7 +203,7 @@
       return false;
     }
 
-    this.widget.settings.onUploadCanceled.call(this.widget.element, this.id, this.data);
+    this.widget.settings.onUploadCanceled.call(this.widget.element, this.id);
 
     if (myStatus === FileStatus.UPLOADING) {
       this.jqXHR.abort();

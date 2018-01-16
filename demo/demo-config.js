@@ -29,29 +29,29 @@ $(function(){
       ui_add_log('New file added #' + id);
       ui_multi_add_file(id, file);
     },
-    onBeforeUpload: function(id, file){
+    onBeforeUpload: function(id){
       // about tho start uploading a file
       ui_add_log('Starting the upload of #' + id);
       ui_multi_update_file_status(id, 'uploading', 'Uploading...');
       ui_multi_update_file_progress(id, 0, '', true);
     },
-    onUploadCanceled: function(id, file) {
+    onUploadCanceled: function(id) {
       // Happens when a file is directly canceled by the user.
       ui_multi_update_file_status(id, 'warning', 'Canceled by User');
       ui_multi_update_file_progress(id, 0, 'warning', false);
     },
-    onUploadProgress: function(id, file, percent){
+    onUploadProgress: function(id, percent){
       // Updating file progress
       ui_multi_update_file_progress(id, percent);
     },
-    onUploadSuccess: function(id, file, data){
+    onUploadSuccess: function(id, data){
       // A file was successfully uploaded
       ui_add_log('Server Response for file #' + id + ': ' + JSON.stringify(data));
       ui_add_log('Upload of file #' + id + ' COMPLETED', 'success');
       ui_multi_update_file_status(id, 'success', 'Upload Complete');
       ui_multi_update_file_progress(id, 100, 'success', false);
     },
-    onUploadError: function(id, file, xhr, status, message){
+    onUploadError: function(id, xhr, status, message){
       ui_multi_update_file_status(id, 'danger', message);
       ui_multi_update_file_progress(id, 0, 'danger', false);  
     },
