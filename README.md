@@ -3,18 +3,20 @@ A jQuery plugin for file uploading using ajax(a sync); includes support for queu
 
 Very ***configurable*** and easy to adapt to any ***Frontend*** design, and very easy to work along side any backend logic.
 
-The focus will be ***modern browsers***, but also providing a method to know when the plugin is not supported. The idea is to keep it simple and ***lightweight***, no need to add hacky code to add unnecessary features for the web we have nowadays.
+The focus will be ***modern browsers***, but also providing a method to know when the plugin is not supported. The idea is to keep it simple and ***lightweight***.
 
-Basic Javascript knowledge is necesary to setup this plugin: how to set parameters, callbacks, etc.
+Basic Javascript knowledge is necessary to setup this plugin: how to set settings, callback events, etc.
 
 - Lightweight: ~8.00 KB 
 - Dependencies: just jQuery!
 - License: Released under the [MIT license](LICENSE.txt)
 
 [![Build Status](https://travis-ci.org/danielm/uploader.png)](https://travis-ci.org/danielm/uploader) 
+[![npm version](https://badge.fury.io/js/dm-uploader.svg)](http://badge.fury.io/js/dm-uploader)
+[![Bower version](https://badge.fury.io/bo/dm-uploader.svg)](http://badge.fury.io/bo/dm-uploader)
 
 ## Live DEMOS
-Check a live Demo here: https://danielmg.org/demo/java-script/uploader
+Check the live Demos here: https://danielmg.org/demo/java-script/uploader
 
 ## Table of contents
 
@@ -23,9 +25,9 @@ Check a live Demo here: https://danielmg.org/demo/java-script/uploader
   * [Usage](#usage)
     * [Markup](#example-markup)
     * [Initialization](#initialization)
-    * [Work flow (using the callbacks)](#work-flow-using-the-callbacks)
   * [Options](#options)
-  * [Callacks](#callbacks)
+  * [Callbacks](#callbacks)
+  * [Methods](#methods)
 
 ## Installation
 
@@ -40,7 +42,7 @@ bower install dm-uploader --save
 ```
 
 ### Download tarball
-You can download the latest release tarball directly from(https://github.com/danielm/uploader/releases) 
+You can download the latest release tarball directly from [releases](https://github.com/danielm/uploader/releases)
 
 ### Git
 ```bash
@@ -55,7 +57,6 @@ As shown in the demos there are many ways to use the plugin, but the basic conce
 - Initialize the plugin on any HTML element such as: <code>`<div />`</code> to provide a Drag and drop area.
 - All <code>`<input type="file"/>`</code> inside the main area element will be bound too.
 - Optionally you can bind it directly to the <code>`<input />`</code>
-- Drag and drop is optional, you could build a widget to customize the regular file-upload element (check demos for this)
 
 ### Example Markup
 This is the simple html markup. The file input is optional but it provides an alternative way to select files for the user(check the online demo to se how to hide/style it)
@@ -67,6 +68,10 @@ This is the simple html markup. The file input is optional but it provides an al
 ```
 
 ### Initialization
+```html
+   <script src="/path/to/jquery.dm-uploader.min.js"></script>
+```
+
 ```javascript
 $("#drop-area").dmUploader({
   url: '/path/to/backend/upload.asp',
@@ -83,20 +88,19 @@ Down below there is a detailed list of all available [Options](#options) and [Ca
 
 Additionally, after initialization you can use any of the available [Methods](#methods) to interact with the plugin.
 
-### Work Flow (using the callbacks)
-...
-
 ## Options
  * **queue**: (boolean) ``Default true`` Files will upload one by one.
  
  * **auto**: (boolean) ``Default true`` Files will start uploading right after they are added.
-   If using the ``queue`` system this option means the -queue- will start automatically after the first file is added.
+   If using the ``queue`` system this option means the ``queue`` will start automatically after the first file is added.
+
+   Setting this to `false` will require you to manually start the uploads using the API [Methods](#methods).
 
  * **dnd**: (boolean) ``Default true`` Enables Drag and Drop.
 
  * **hookDocument**: (boolean) ``Default true`` Disables dropping files on $(document).
 
-   **This is necesary** to prevent the Browser from redirecting when dropping files.
+   **This is necessary** to prevent the Browser from redirecting when dropping files.
 
    The only reason why you may want to disable it is when using multiple instances of the plugin. If that's the case you only need to use it **once**.
 
@@ -115,7 +119,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
    }
    ```
 
-   This can also be a `function` if you need a dynamic value. If this function returns `false` nothing will be added.
+   If you need a dynamic value this can be set as a `function`. Also, if this function returns `false` nothing will be added.
 
    ```javascript
    // Example
@@ -130,7 +134,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
 
    ```javascript
    // Example
-   extraData: {
+   headers: {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
    }
    ```
@@ -139,7 +143,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
 
    Default is `null` which means jQuery will try to 'guess' depending of what the server returns.
 
-   Other values can be: `xml`, `json`, `script`, or `html`
+   Other values can be: `xml`, `json`, `script`, `html` or `text`
 
    Reference: http://api.jquery.com/jquery.ajax/
 
@@ -157,7 +161,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
    maxFileSize: 3000000 // 3 Megs
    ```
 
- * **allowedTypes**: (string) ``Default "*"`` File validation: Regular expression to match file types.
+ * **allowedTypes**: (string) ``Default "*"`` File validation: Regular expression to match file mime-type.
 
    ```javascript
    allowedTypes: "image/*"
@@ -171,7 +175,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
 
 ## Callbacks
 
-### General propouse
+### General purpose
 
  * **onInit**: () Widget it's ready to use.
 
@@ -196,45 +200,53 @@ Additionally, after initialization you can use any of the available [Methods](#m
    Triggers when the queue reaches the end (even if some files were cancelled or gave any error).
 
 ### File callbacks
- All these include `id` and `file`
+ All these include `id`
 
- `id` (string): Unique ID. Usefull to identify the same file in subsequent callbacks.
-
- `file` (object): File object, use it to access file details such as name, size, etc. For [reference click here](https://developer.mozilla.org/en-US/docs/Web/API/File).
+ `id` (string): Unique ID. Useful to identify the same file in subsequent callbacks.
 
  * **onNewFile**: (id, file) A new file was selected or dropped by the user.
 
-   If multiple are added, this gets called multiple times.
+   - `file` (object): File object, use it to access file details such as name, size, etc.
 
-   File validations were already executed and passed.
+     For [reference click here](https://developer.mozilla.org/en-US/docs/Web/API/File).
 
-   If a return value is provided and is `=== false` the file will be ignored by the widget.
+   - If multiple are added, this gets called multiple times.
 
- * **onBeforeUpload**: (id, file) Upload request is about to be sent.
+   - File validations were already executed.
 
-   If a return value is provided and is `=== false` the upload will be cancelled.
+   - If a return value is provided and is `=== false` the file will be ignored by the widget.
 
- * **onUploadProgress**: (id, file, percent) Got a new upload percentage for the file
+   - Use this return value to implement your own validators.
+
+ * **onBeforeUpload**: (id) Upload request is about to be executed.
+
+ * **onUploadProgress**: (id, percent) Got a new upload percentage for the file
 
    `percent` (integer) : 0-100
 
- * **onUploadSuccess**: (id, file, data) File was succefully uploaded and got a response form the server
+ * **onUploadSuccess**: (id, data) File was successfully uploaded and got a response form the server
 
    `data` (object) : Upload request response. The object type of this parameter depends of: `dataType` 
 
    See more in [options](#options).
 
- * **onUploadError**: (id, file, message) A connection error happened during the upload request.
+ * **onUploadError**: (id, xhr, status, errorThrown) An error happened during the upload request.
 
-   `message` (string) : Simple message describing the HTTP error, such as `Not Found`.
+   `xhr` (object) : XMLHttpRequest
 
- * **onUploadComplete**: (id, file) The upload of the file was complete.
+   `status` (integer) : Error type, example: "timeout", "error", "abort", and "parsererror"
 
-   This triggers right after `onUploadSuccess` `onUploadError`. In **both** cases.
+   `errorThrown` (string) : Only when an HTTP error occurs: `Not Found`, `Bad Request`, etc.
 
- * **onUploadCanceled**: (id, file) Upload was cancelled by the user.
+   Reference: http://api.jquery.com/jquery.ajax/
 
-   This one triggers when cancelling an upload using one of the methods.
+ * **onUploadComplete**: (id) The upload of the file was complete.
+
+   This triggers right after `onUploadSuccess` or `onUploadError`. In **both** cases.
+
+ * **onUploadCanceled**: (id) Upload was cancelled by the user.
+
+   This one triggers when cancelling an upload using one of the API methods.
 
    See more in [methods](#methods).
 
@@ -267,6 +279,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
      - Start the upload of an individual file if an `id` was provided and there isn't a `queue` running.
      - Retry a failed or a previously cancelled file.
      - Start the queue if `auto` is set to `false` and no `id` is provided
+     - Start ALL the pending files if `queue` is set to false `false`
 
     Example:
 
@@ -278,9 +291,9 @@ Additionally, after initialization you can use any of the available [Methods](#m
 
    Depending on the situation this method may do:
      - Cancel a file that is currently uploading if an `id` is provided.
-     - Cancel all currently files if not `id` is provided.
+     - Cancel all currently uploading files if an `id` is NOT provided.
      - Cancel a pending file, and it it will be skipped by the `queue` if using that option
-     - Stop the current `queue` if using that option.
+     - Stop the current `queue` if using that option, and all current uploads.
 
    Example:
 
@@ -304,7 +317,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
    
    - Stops all uploads
    - Removes all files
-   - Releases all the events, including the ones used by `hookDocument` fi using that option
+   - Releases all the events, including the ones used by `hookDocument` if using that option
 
    Example:
 
