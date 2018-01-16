@@ -11,9 +11,9 @@ Basic Javascript knowledge is necessary to setup this plugin: how to set setting
 - Dependencies: just jQuery!
 - License: Released under the [MIT license](LICENSE.txt)
 
-[![Build Status](https://travis-ci.org/danielm/uploader.png)](https://travis-ci.org/danielm/uploader) 
-[![npm version](https://badge.fury.io/js/dm-uploader.svg)](http://badge.fury.io/js/dm-uploader)
-[![Bower version](https://badge.fury.io/bo/dm-uploader.svg)](http://badge.fury.io/bo/dm-uploader)
+[![Build Status](https://travis-ci.org/danielm/uploader.svg?branch=master)](https://travis-ci.org/danielm/uploader)
+[![npm version](https://badge.fury.io/js/dm-file-uploader.svg)](http://badge.fury.io/js/dm-file-uploader)
+[![Bower version](https://badge.fury.io/bo/dm-file-uploader.svg)](http://badge.fury.io/bo/dm-file-uploader)
 
 ## Live DEMOS
 Check the live Demos here: https://danielmg.org/demo/java-script/uploader
