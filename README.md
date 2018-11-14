@@ -62,7 +62,7 @@ As shown in the demos there are many ways to use the plugin, but the basic conce
 This is the simple html markup. The file input is optional but it provides an alternative way to select files for the user(check the online demo to se how to hide/style it)
 ```html
 <div id="drop-area">
-  <h3>Drag and Drop Files Here<h3/>
+  <h3>Drag and Drop Files Here</h3>
   <input type="file" title="Click to add Files">
 </div>
 ```
