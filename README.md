@@ -7,7 +7,7 @@ The focus will be ***modern browsers***, but also providing a method to know whe
 
 Basic Javascript knowledge is necessary to setup this plugin: how to set settings, callback events, etc.
 
-- Lightweight: ~8.00 KB 
+- Lightweight: ~8.00 KB
 - Dependencies: just jQuery!
 - License: Released under the [MIT license](LICENSE.txt)
 
@@ -62,7 +62,7 @@ As shown in the demos there are many ways to use the plugin, but the basic conce
 This is the simple html markup. The file input is optional but it provides an alternative way to select files for the user(check the online demo to se how to hide/style it)
 ```html
 <div id="drop-area">
-  <h3>Drag and Drop Files Here<h3/>
+  <h3>Drag and Drop Files Here</h3>
   <input type="file" title="Click to add Files">
 </div>
 ```
@@ -76,11 +76,11 @@ This is the simple html markup. The file input is optional but it provides an al
 $("#drop-area").dmUploader({
   url: '/path/to/backend/upload.asp',
   //... More settings here...
-  
+
   onInit: function(){
     console.log('Callback: Plugin initialized');
   }
-  
+
   // ... More callbacks
 });
 ```
@@ -90,7 +90,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
 
 ## Options
  * **queue**: (boolean) ``Default true`` Files will upload one by one.
- 
+
  * **auto**: (boolean) ``Default true`` Files will start uploading right after they are added.
    If using the ``queue`` system this option means the ``queue`` will start automatically after the first file is added.
 
@@ -193,7 +193,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
 
    This also triggers when the files are dropped.
 
- * **onComplete**: () All pending files are completed. 
+ * **onComplete**: () All pending files are completed.
 
    Only applies when using `queue: true`. See [options](#options).
 
@@ -226,7 +226,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
 
  * **onUploadSuccess**: (id, data) File was successfully uploaded and got a response form the server
 
-   `data` (object) : Upload request response. The object type of this parameter depends of: `dataType` 
+   `data` (object) : Upload request response. The object type of this parameter depends of: `dataType`
 
    See more in [options](#options).
 
@@ -302,7 +302,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
    ```
 
  * **reset**: () Resets the plugin
-   
+
    - Stops all uploads
    - Removes all files
    - Resets queue
@@ -314,7 +314,7 @@ Additionally, after initialization you can use any of the available [Methods](#m
    ```
 
  * **destroy**: () Destroys all plugin data
-   
+
    - Stops all uploads
    - Removes all files
    - Releases all the events, including the ones used by `hookDocument` if using that option
@@ -325,4 +325,3 @@ Additionally, after initialization you can use any of the available [Methods](#m
    // Example
    $("#drop-area").dmUploader("destroy");
    ```
-
