@@ -126,6 +126,7 @@
       cache: false,
       contentType: false,
       processData: false,
+      timeout:0,
       forceSync: false,
       xhr: function() { return file.getXhr(); },
       success: function(data) { file.onSuccess(data); },
