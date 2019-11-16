@@ -84,7 +84,8 @@
     this.id = Math.random().toString(36).substr(2);
   };
 
-  DmUploaderFile.prototype.upload = function () {
+  DmUploaderFile.prototype.upload = function () 
+  {
     var file = this;
 
     if (!file.canUpload()) {
@@ -135,12 +136,14 @@
     return true;
   };
 
-  DmUploaderFile.prototype.onSuccess = function (data) {
+  DmUploaderFile.prototype.onSuccess = function (data) 
+  {
     this.status = FileStatus.COMPLETED;
     this.widget.settings.onUploadSuccess.call(this.widget.element, this.id, data);
   };
 
-  DmUploaderFile.prototype.onError = function (xhr, status, errMsg) {
+  DmUploaderFile.prototype.onError = function (xhr, status, errMsg) 
+  {
     // If the status is: cancelled (by the user) don't invoke the error callback
     if (this.status !== FileStatus.CANCELLED) {
       this.status = FileStatus.FAILED;
@@ -148,7 +151,8 @@
     }
   };
 
-  DmUploaderFile.prototype.onComplete = function () {
+  DmUploaderFile.prototype.onComplete = function () 
+  {
     this.widget.activeFiles--;
 
     if (this.status !== FileStatus.CANCELLED) {
@@ -162,7 +166,8 @@
     }
   };
 
-  DmUploaderFile.prototype.getXhr = function () {
+  DmUploaderFile.prototype.getXhr = function () 
+  {
     var file = this;
     var xhrobj = $.ajaxSettings.xhr();
 
@@ -182,7 +187,8 @@
     return xhrobj;
   };
 
-  DmUploaderFile.prototype.cancel = function (abort) {
+  DmUploaderFile.prototype.cancel = function (abort) 
+  {
     // The abort flag is to track if we are calling this function directly (using the cancel Method, by id)
     // or the call comes from the 'gobal' method aka cancelAll.
     // THis mean that we don't want to trigger the cancel event on file that isn't uploading, UNLESS directly doing it
@@ -206,7 +212,8 @@
     return true;
   };
 
-  DmUploaderFile.prototype.canUpload = function () {
+  DmUploaderFile.prototype.canUpload = function () 
+  {
     return (
       this.status === FileStatus.PENDING ||
       this.status === FileStatus.FAILED
@@ -230,7 +237,8 @@
     return this;
   };
 
-  DmUploader.prototype.checkSupport = function () {
+  DmUploader.prototype.checkSupport = function () 
+  {
     // This one is mandatory for all modes
     if (typeof window.FormData === "undefined") {
       return false;
@@ -250,7 +258,8 @@
     return !$("<input type=\"file\" />").prop("disabled");
   };
 
-  DmUploader.prototype.init = function () {
+  DmUploader.prototype.init = function () 
+  {
     var widget = this;
 
     // Queue vars
@@ -303,7 +312,8 @@
     return this;
   };
 
-  DmUploader.prototype.initDnD = function () {
+  DmUploader.prototype.initDnD = function () 
+  {
     var widget = this;
 
     // -- Now our own Drop
@@ -392,7 +402,8 @@
     });
   };
 
-  DmUploader.prototype.initPaste = function () {
+  DmUploader.prototype.initPaste = function () 
+  {
     var widget = this;
     $(document).on("paste." + pluginName, function (evt) {
       evt.preventDefault();
@@ -413,7 +424,8 @@
 
   };
 
-  DmUploader.prototype.releaseEvents = function () {
+  DmUploader.prototype.releaseEvents = function () 
+  {
     // Leave everyone ALONE ;_;
 
     this.element.off("." + pluginName);
@@ -424,7 +436,8 @@
     }
   };
 
-  DmUploader.prototype.validateFile = function (file) {
+  DmUploader.prototype.validateFile = function (file) 
+  {
     // Check file size
     if ((this.settings.maxFileSize > 0) &&
       (file.size > this.settings.maxFileSize)) {
@@ -457,7 +470,8 @@
     return new DmUploaderFile(file, this);
   };
 
-  DmUploader.prototype.addFiles = function (files) {
+  DmUploader.prototype.addFiles = function (files) 
+  {
     var nFiles = 0;
 
     for (var i = 0; i < files.length; i++) {
@@ -496,7 +510,8 @@
     return this;
   };
 
-  DmUploader.prototype.processQueue = function () {
+  DmUploader.prototype.processQueue = function () 
+  {
     this.queuePos++;
 
     if (this.queuePos >= this.queue.length) {
@@ -518,14 +533,16 @@
     return this.queue[this.queuePos].upload();
   };
 
-  DmUploader.prototype.restartQueue = function () {
+  DmUploader.prototype.restartQueue = function () 
+  {
     this.queuePos = -1;
     this.queueRunning = false;
 
     this.processQueue();
   };
 
-  DmUploader.prototype.findById = function (id) {
+  DmUploader.prototype.findById = function (id) 
+  {
     var r = false;
 
     for (var i = 0; i < this.queue.length; i++) {
@@ -538,7 +555,8 @@
     return r;
   };
 
-  DmUploader.prototype.cancelAll = function () {
+  DmUploader.prototype.cancelAll = function () 
+  {
     var queueWasRunning = this.queueRunning;
     this.queueRunning = false;
 
@@ -552,7 +570,8 @@
     }
   };
 
-  DmUploader.prototype.startAll = function () {
+  DmUploader.prototype.startAll = function () 
+  {
     if (this.settings.queue) {
       // Resume queue
       this.restartQueue();
