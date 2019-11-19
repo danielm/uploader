@@ -11,7 +11,7 @@
 
 /* global define, define, window, document, FormData */
 
-(function (factory) {
+(function(factory) {
   "use strict";
   if (typeof define === "function" && define.amd) {
     // AMD. Register as an anonymous module.
@@ -22,7 +22,7 @@
     // Browser globals
     factory(window.jQuery);
   }
-}(function ($) {
+}(function($) {
   "use strict";
 
   var pluginName = "dmUploader";
@@ -52,26 +52,27 @@
     maxFileSize: 0,
     allowedTypes: "*",
     extFilter: null,
-    onInit: function () { },
-    onComplete: function () { },
-    onFallbackMode: function () { },
-    onNewFile: function () { },        //params: id, file
-    onBeforeUpload: function () { },   //params: id
-    onUploadProgress: function () { }, //params: id, percent
-    onUploadSuccess: function () { },  //params: id, data
-    onUploadCanceled: function () { }, //params: id
-    onUploadError: function () { },    //params: id, xhr, status, message
-    onUploadComplete: function () { }, //params: id
-    onFileTypeError: function () { },  //params: file
-    onFileSizeError: function () { },  //params: file
-    onFileExtError: function () { },   //params: file
-    onDragEnter: function () { },
-    onDragLeave: function () { },
-    onDocumentDragEnter: function () { },
-    onDocumentDragLeave: function () { }
+    onInit: function(){},
+    onComplete: function(){},
+    onFallbackMode: function() {},
+    onNewFile: function(){},        //params: id, file
+    onBeforeUpload: function(){},   //params: id
+    onUploadProgress: function(){}, //params: id, percent
+    onUploadSuccess: function(){},  //params: id, data
+    onUploadCanceled: function(){}, //params: id
+    onUploadError: function(){},    //params: id, xhr, status, message
+    onUploadComplete: function(){}, //params: id
+    onFileTypeError: function(){},  //params: file
+    onFileSizeError: function(){},  //params: file
+    onFileExtError: function(){},   //params: file
+    onDragEnter: function(){},
+    onDragLeave: function(){},
+    onDocumentDragEnter: function(){},
+    onDocumentDragLeave: function(){}
   };
-
-  var DmUploaderFile = function (file, widget) {
+  
+  var DmUploaderFile = function(file, widget)
+  {
     this.data = file;
 
     this.widget = widget;
@@ -84,7 +85,7 @@
     this.id = Math.random().toString(36).substr(2);
   };
 
-  DmUploaderFile.prototype.upload = function () 
+  DmUploaderFile.prototype.upload = function()
   {
     var file = this;
 
@@ -103,11 +104,11 @@
 
     // Append extra Form Data
     var customData = file.widget.settings.extraData;
-    if (typeof (customData) === "function") {
+    if (typeof(customData) === "function") {
       customData = customData.call(file.widget.element, file.id);
     }
 
-    $.each(customData, function (exKey, exVal) {
+    $.each(customData, function(exKey, exVal) {
       fd.append(exKey, exVal);
     });
 
@@ -127,22 +128,22 @@
       contentType: false,
       processData: false,
       forceSync: false,
-      xhr: function () { return file.getXhr(); },
-      success: function (data) { file.onSuccess(data); },
-      error: function (xhr, status, errMsg) { file.onError(xhr, status, errMsg); },
-      complete: function () { file.onComplete(); },
+      xhr: function() { return file.getXhr(); },
+      success: function(data) { file.onSuccess(data); },
+      error: function(xhr, status, errMsg) { file.onError(xhr, status, errMsg); },
+      complete: function() { file.onComplete(); },
     });
 
     return true;
   };
 
-  DmUploaderFile.prototype.onSuccess = function (data) 
+  DmUploaderFile.prototype.onSuccess = function(data)
   {
     this.status = FileStatus.COMPLETED;
     this.widget.settings.onUploadSuccess.call(this.widget.element, this.id, data);
   };
 
-  DmUploaderFile.prototype.onError = function (xhr, status, errMsg) 
+  DmUploaderFile.prototype.onError = function(xhr, status, errMsg)
   {
     // If the status is: cancelled (by the user) don't invoke the error callback
     if (this.status !== FileStatus.CANCELLED) {
@@ -151,7 +152,7 @@
     }
   };
 
-  DmUploaderFile.prototype.onComplete = function () 
+  DmUploaderFile.prototype.onComplete = function()
   {
     this.widget.activeFiles--;
 
@@ -166,13 +167,13 @@
     }
   };
 
-  DmUploaderFile.prototype.getXhr = function () 
+  DmUploaderFile.prototype.getXhr = function()
   {
     var file = this;
     var xhrobj = $.ajaxSettings.xhr();
 
     if (xhrobj.upload) {
-      xhrobj.upload.addEventListener("progress", function (event) {
+      xhrobj.upload.addEventListener("progress", function(event) {
         var percent = 0;
         var position = event.loaded || event.position;
         var total = event.total || event.totalSize;
@@ -187,7 +188,7 @@
     return xhrobj;
   };
 
-  DmUploaderFile.prototype.cancel = function (abort) 
+  DmUploaderFile.prototype.cancel = function(abort)
   {
     // The abort flag is to track if we are calling this function directly (using the cancel Method, by id)
     // or the call comes from the 'gobal' method aka cancelAll.
@@ -212,7 +213,7 @@
     return true;
   };
 
-  DmUploaderFile.prototype.canUpload = function () 
+  DmUploaderFile.prototype.canUpload = function()
   {
     return (
       this.status === FileStatus.PENDING ||
@@ -220,7 +221,8 @@
     );
   };
 
-  var DmUploader = function (element, options) {
+  var DmUploader = function(element, options)
+  {
     this.element = $(element);
     this.settings = $.extend({}, defaults, options);
 
@@ -237,7 +239,7 @@
     return this;
   };
 
-  DmUploader.prototype.checkSupport = function () 
+  DmUploader.prototype.checkSupport = function()
   {
     // This one is mandatory for all modes
     if (typeof window.FormData === "undefined") {
@@ -246,9 +248,9 @@
 
     // Test based on: Modernizr/feature-detects/forms/fileinput.js
     var exp = new RegExp(
-      "/(Android (1.0|1.1|1.5|1.6|2.0|2.1))|" +
-      "(Windows Phone (OS 7|8.0))|(XBLWP)|" +
-      "(ZuneWP)|(w(eb)?OSBrowser)|(webOS)|" +
+      "/(Android (1.0|1.1|1.5|1.6|2.0|2.1))|"+
+      "(Windows Phone (OS 7|8.0))|(XBLWP)|"+
+      "(ZuneWP)|(w(eb)?OSBrowser)|(webOS)|"+
       "(Kindle\/(1.0|2.0|2.5|3.0))/");
 
     if (exp.test(window.navigator.userAgent)) {
@@ -258,7 +260,7 @@
     return !$("<input type=\"file\" />").prop("disabled");
   };
 
-  DmUploader.prototype.init = function () 
+  DmUploader.prototype.init = function()
   {
     var widget = this;
 
@@ -278,10 +280,10 @@
       input.prop("multiple", this.settings.multiple);
 
       // Or does it has the input as a child
-      input.on("change." + pluginName, function (evt) {
+      input.on("change." + pluginName, function(evt) {
         var files = evt.target && evt.target.files;
 
-        if (!files || !files.length) {
+        if (!files || !files.length){
           return;
         }
 
@@ -312,7 +314,7 @@
     return this;
   };
 
-  DmUploader.prototype.initDnD = function () 
+  DmUploader.prototype.initDnD = function()
   {
     var widget = this;
 
@@ -320,7 +322,7 @@
     widget.element.on("drop." + pluginName, function (evt) {
       evt.preventDefault();
 
-      if (widget.draggingOver > 0) {
+      if (widget.draggingOver > 0){
         widget.draggingOver = 0;
         widget.settings.onDragLeave.call(widget.element);
       }
@@ -343,22 +345,22 @@
     });
 
     //-- These two events/callbacks are onlt to maybe do some fancy visual stuff
-    widget.element.on("dragenter." + pluginName, function (evt) {
+    widget.element.on("dragenter." + pluginName, function(evt) {
       evt.preventDefault();
 
-      if (widget.draggingOver === 0) {
+      if (widget.draggingOver === 0){
         widget.settings.onDragEnter.call(widget.element);
       }
 
       widget.draggingOver++;
     });
 
-    widget.element.on("dragleave." + pluginName, function (evt) {
+    widget.element.on("dragleave." + pluginName, function(evt) {
       evt.preventDefault();
 
       widget.draggingOver--;
 
-      if (widget.draggingOver === 0) {
+      if (widget.draggingOver === 0){
         widget.settings.onDragLeave.call(widget.element);
       }
     });
@@ -368,36 +370,36 @@
     }
 
     // Adding some off/namepacing to prevent some weird cases when people use multiple instances
-    $(document).off("drop." + pluginName).on("drop." + pluginName, function (evt) {
+    $(document).off("drop." + pluginName).on("drop." + pluginName, function(evt) {
       evt.preventDefault();
 
-      if (widget.draggingOverDoc > 0) {
+      if (widget.draggingOverDoc > 0){
         widget.draggingOverDoc = 0;
         widget.settings.onDocumentDragLeave.call(widget.element);
       }
     });
 
-    $(document).off("dragenter." + pluginName).on("dragenter." + pluginName, function (evt) {
+    $(document).off("dragenter." + pluginName).on("dragenter." + pluginName, function(evt) {
       evt.preventDefault();
 
-      if (widget.draggingOverDoc === 0) {
+      if (widget.draggingOverDoc === 0){
         widget.settings.onDocumentDragEnter.call(widget.element);
       }
 
       widget.draggingOverDoc++;
     });
 
-    $(document).off("dragleave." + pluginName).on("dragleave." + pluginName, function (evt) {
+    $(document).off("dragleave." + pluginName).on("dragleave." + pluginName, function(evt) {
       evt.preventDefault();
 
       widget.draggingOverDoc--;
 
-      if (widget.draggingOverDoc === 0) {
+      if (widget.draggingOverDoc === 0){
         widget.settings.onDocumentDragLeave.call(widget.element);
       }
     });
 
-    $(document).off("dragover." + pluginName).on("dragover." + pluginName, function (evt) {
+    $(document).off("dragover." + pluginName).on("dragover." + pluginName, function(evt) {
       evt.preventDefault();
     });
   };
@@ -421,11 +423,9 @@
     if (!widget.settings.hookDocument) {
       return;
     }
-
   };
 
-  DmUploader.prototype.releaseEvents = function () 
-  {
+  DmUploader.prototype.releaseEvents = function() {
     // Leave everyone ALONE ;_;
 
     this.element.off("." + pluginName);
@@ -436,11 +436,11 @@
     }
   };
 
-  DmUploader.prototype.validateFile = function (file) 
+  DmUploader.prototype.validateFile = function(file)
   {
     // Check file size
     if ((this.settings.maxFileSize > 0) &&
-      (file.size > this.settings.maxFileSize)) {
+        (file.size > this.settings.maxFileSize)) {
 
       this.settings.onFileSizeError.call(this.element, file);
 
@@ -449,7 +449,7 @@
 
     // Check file type
     if ((this.settings.allowedTypes !== "*") &&
-      !file.type.match(this.settings.allowedTypes)) {
+        !file.type.match(this.settings.allowedTypes)){
 
       this.settings.onFileTypeError.call(this.element, file);
 
@@ -470,14 +470,15 @@
     return new DmUploaderFile(file, this);
   };
 
-  DmUploader.prototype.addFiles = function (files) 
+  DmUploader.prototype.addFiles = function(files)
   {
     var nFiles = 0;
 
-    for (var i = 0; i < files.length; i++) {
+    for (var i= 0; i < files.length; i++)
+    {
       var file = this.validateFile(files[i]);
 
-      if (!file) {
+      if (!file){
         continue;
       }
 
@@ -493,7 +494,7 @@
       }
 
       this.queue.push(file);
-
+      
       nFiles++;
     }
 
@@ -510,7 +511,7 @@
     return this;
   };
 
-  DmUploader.prototype.processQueue = function () 
+  DmUploader.prototype.processQueue = function()
   {
     this.queuePos++;
 
@@ -533,7 +534,7 @@
     return this.queue[this.queuePos].upload();
   };
 
-  DmUploader.prototype.restartQueue = function () 
+  DmUploader.prototype.restartQueue = function()
   {
     this.queuePos = -1;
     this.queueRunning = false;
@@ -541,7 +542,7 @@
     this.processQueue();
   };
 
-  DmUploader.prototype.findById = function (id) 
+  DmUploader.prototype.findById = function(id)
   {
     var r = false;
 
@@ -555,7 +556,7 @@
     return r;
   };
 
-  DmUploader.prototype.cancelAll = function () 
+  DmUploader.prototype.cancelAll =  function()
   {
     var queueWasRunning = this.queueRunning;
     this.queueRunning = false;
@@ -570,7 +571,7 @@
     }
   };
 
-  DmUploader.prototype.startAll = function () 
+  DmUploader.prototype.startAll = function()
   {
     if (this.settings.queue) {
       // Resume queue
@@ -585,8 +586,8 @@
 
   // Public API methods
   DmUploader.prototype.methods = {
-    start: function (id) {
-      if (this.queueRunning) {
+    start: function(id) {
+      if (this.queueRunning){
         // Do not allow to manually upload Files when a queue is running
         return false;
       }
@@ -603,7 +604,7 @@
           return false;
         }
       }
-
+      
       // Trying to Start an upload by ID
       if (file) {
         if (file.status === FileStatus.CANCELLED) {
@@ -618,7 +619,7 @@
 
       return true;
     },
-    cancel: function (id) {
+    cancel: function(id) {
       var file = false;
       if (typeof id !== "undefined") {
         file = this.findById(id);
@@ -636,12 +637,12 @@
       }
 
       // With no id provided...
-
+      
       this.cancelAll();
 
       return true;
     },
-    reset: function () {
+    reset: function() {
 
       this.cancelAll();
 
@@ -651,7 +652,7 @@
 
       return true;
     },
-    destroy: function () {
+    destroy: function() {
       this.cancelAll();
 
       this.releaseEvents();
@@ -660,18 +661,18 @@
     }
   };
 
-  $.fn.dmUploader = function (options) {
+  $.fn.dmUploader = function(options) {
     var args = arguments;
 
     if (typeof options === "string") {
-      this.each(function () {
+      this.each(function() {
         var plugin = $.data(this, pluginName);
 
         if (plugin instanceof DmUploader) {
           if (typeof plugin.methods[options] === "function") {
             plugin.methods[options].apply(plugin, Array.prototype.slice.call(args, 1));
           } else {
-            $.error("Method " + options + " does not exist in jQuery.dmUploader");
+            $.error("Method " +  options + " does not exist in jQuery.dmUploader");
           }
         } else {
           $.error("Unknown plugin data found by jQuery.dmUploader");
