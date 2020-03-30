@@ -40,6 +40,7 @@
     auto: true,
     queue: true,
     dnd: true,
+    paste: true,
     hookDocument: true,
     multiple: true,
     url: document.URL,
@@ -296,7 +297,11 @@
       this.initDnD();
     }
 
-    if (input.length === 0 && !this.settings.dnd) {
+    if (this.settings.paste) {
+      this.initPaste();
+    }
+
+    if (input.length === 0 && !this.settings.dnd && !this.settings.paste) {
       // Trigger an error because if this happens the plugin wont do anything.
       $.error("Markup error found by jQuery.dmUploader");
 
@@ -397,6 +402,27 @@
     $(document).off("dragover." + pluginName).on("dragover." + pluginName, function(evt) {
       evt.preventDefault();
     });
+  };
+
+  DmUploader.prototype.initPaste = function () 
+  {
+    var widget = this;
+    $(document).on("paste." + pluginName, function (evt) {
+      evt.preventDefault();
+
+      var clipboardData = evt.originalEvent && evt.originalEvent.clipboardData;
+      if (!clipboardData || !clipboardData.files || !clipboardData.files.length) {
+        return;
+      }
+
+      // Clipboard has only one file (default name: image.png)
+      var files = [clipboardData.files[0]];
+      widget.addFiles(files);
+    });
+
+    if (!widget.settings.hookDocument) {
+      return;
+    }
   };
 
   DmUploader.prototype.releaseEvents = function() {
