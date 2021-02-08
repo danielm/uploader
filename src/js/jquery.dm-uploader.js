@@ -6,6 +6,9 @@
  * Released under the MIT license.
  * https://github.com/danielm/uploader/blob/master/LICENSE.txt
  *
+ *
+ * Nikitul: Added the posibility to remove file from queue
+ *
  * @preserve
  */
 
@@ -55,6 +58,7 @@
     onComplete: function(){},
     onFallbackMode: function() {},
     onNewFile: function(){},        //params: id, file
+    onRemoveFile: function(){},     //params: id, file
     onBeforeUpload: function(){},   //params: id
     onUploadProgress: function(){}, //params: id, percent
     onUploadSuccess: function(){},  //params: id, data
@@ -69,7 +73,7 @@
     onDocumentDragEnter: function(){},
     onDocumentDragLeave: function(){}
   };
-  
+
   var DmUploaderFile = function(file, widget)
   {
     this.data = file;
@@ -468,7 +472,7 @@
       }
 
       this.queue.push(file);
-      
+
       nFiles++;
     }
 
@@ -480,6 +484,44 @@
     // Are we auto-uploading files?
     if (this.settings.auto && this.settings.queue && !this.queueRunning) {
       this.processQueue();
+    }
+
+    return this;
+  };
+
+  DmUploader.prototype.removeFiles = function(files)
+  {
+    var nFiles = 0, index;
+
+    var queueWasRunning = this.queueRunning;
+    this.queueRunning = false;
+
+
+    for (var i= 0; i < files.length; i++)
+    {
+      var file = files[i];
+
+      // Cancel upload
+      file.cancel(true);
+
+      index = this.queue.indexOf(file);
+
+      if (index > -1) {
+        this.queue.splice(index, 1);
+      }
+
+      // If the callback returns false file will not be processed. This may allow some customization
+      var can_continue = this.settings.onRemoveFile.call(this.element, file.id, file.data);
+      if (can_continue === false) {
+        continue;
+      }
+
+      nFiles++;
+    }
+
+
+    if (queueWasRunning) {
+      this.restartQueue();
     }
 
     return this;
@@ -578,7 +620,7 @@
           return false;
         }
       }
-      
+
       // Trying to Start an upload by ID
       if (file) {
         if (file.status === FileStatus.CANCELLED) {
@@ -611,8 +653,25 @@
       }
 
       // With no id provided...
-      
+
       this.cancelAll();
+
+      return true;
+    },
+    remove: function(id) {
+      var file = false;
+      if (typeof id !== "undefined") {
+        file = this.findById(id);
+
+        if (!file) {
+          // File not found in stack
+          $.error("File not found in jQuery.dmUploader");
+
+          return false;
+        }
+      }
+
+      this.removeFiles([file]);
 
       return true;
     },
