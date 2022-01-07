@@ -316,7 +316,8 @@
     // -- Now our own Drop
     widget.element.on("drop." + pluginName, function (evt) {
       evt.preventDefault();
-
+      evt.stopPropagation();
+	  
       if (widget.draggingOver > 0){
         widget.draggingOver = 0;
         widget.settings.onDragLeave.call(widget.element);
@@ -342,6 +343,7 @@
     //-- These two events/callbacks are onlt to maybe do some fancy visual stuff
     widget.element.on("dragenter." + pluginName, function(evt) {
       evt.preventDefault();
+      evt.stopPropagation();
 
       if (widget.draggingOver === 0){
         widget.settings.onDragEnter.call(widget.element);
@@ -352,6 +354,7 @@
 
     widget.element.on("dragleave." + pluginName, function(evt) {
       evt.preventDefault();
+      evt.stopPropagation();
 
       widget.draggingOver--;
 
@@ -367,6 +370,7 @@
     // Adding some off/namepacing to prevent some weird cases when people use multiple instances
     $(document).off("drop." + pluginName).on("drop." + pluginName, function(evt) {
       evt.preventDefault();
+      evt.stopPropagation();
 
       if (widget.draggingOverDoc > 0){
         widget.draggingOverDoc = 0;
@@ -386,6 +390,7 @@
 
     $(document).off("dragleave." + pluginName).on("dragleave." + pluginName, function(evt) {
       evt.preventDefault();
+      evt.stopPropagation();
 
       widget.draggingOverDoc--;
 
@@ -396,7 +401,8 @@
 
     $(document).off("dragover." + pluginName).on("dragover." + pluginName, function(evt) {
       evt.preventDefault();
-    });
+      evt.stopPropagation();
+   });
   };
 
   DmUploader.prototype.releaseEvents = function() {
